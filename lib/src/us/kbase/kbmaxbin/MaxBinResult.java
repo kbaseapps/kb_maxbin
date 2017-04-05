@@ -23,15 +23,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "result_folder",
+    "result_directory",
     "obj_ref",
     "report_name",
     "report_ref"
 })
 public class MaxBinResult {
 
-    @JsonProperty("result_folder")
-    private String resultFolder;
+    @JsonProperty("result_directory")
+    private String resultDirectory;
     @JsonProperty("obj_ref")
     private String objRef;
     @JsonProperty("report_name")
@@ -40,18 +40,18 @@ public class MaxBinResult {
     private String reportRef;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("result_folder")
-    public String getResultFolder() {
-        return resultFolder;
+    @JsonProperty("result_directory")
+    public String getResultDirectory() {
+        return resultDirectory;
     }
 
-    @JsonProperty("result_folder")
-    public void setResultFolder(String resultFolder) {
-        this.resultFolder = resultFolder;
+    @JsonProperty("result_directory")
+    public void setResultDirectory(String resultDirectory) {
+        this.resultDirectory = resultDirectory;
     }
 
-    public MaxBinResult withResultFolder(String resultFolder) {
-        this.resultFolder = resultFolder;
+    public MaxBinResult withResultDirectory(String resultDirectory) {
+        this.resultDirectory = resultDirectory;
         return this;
     }
 
@@ -112,7 +112,7 @@ public class MaxBinResult {
 
     @Override
     public String toString() {
-        return ((((((((((("MaxBinResult"+" [resultFolder=")+ resultFolder)+", objRef=")+ objRef)+", reportName=")+ reportName)+", reportRef=")+ reportRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((("MaxBinResult"+" [resultDirectory=")+ resultDirectory)+", objRef=")+ objRef)+", reportName=")+ reportName)+", reportRef=")+ reportRef)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

@@ -7,8 +7,10 @@ import errno
 import subprocess
 import shutil
 import sys
+import re
 
 from DataFileUtil.DataFileUtilClient import DataFileUtil
+from KBaseReport.KBaseReportClient import KBaseReport
 
 
 def log(message, prefix_newline=False):
@@ -166,6 +168,89 @@ class MaxBinUtil:
 
         return command
 
+    def _generate_report(self, result_directory, params):
+        """
+        generate_report: generate summary report
+
+        """
+        log('Generating report')
+
+        uuid_string = str(uuid.uuid4())
+        upload_message = 'Job Finished\n\n'
+
+        file_list = os.listdir(result_directory)
+        header = params.get('out_header')
+
+        upload_message += '--------------------------\nSummary:\n\n'
+        with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
+            first_line = True
+            lines = summary_file.readlines()
+            for line in lines:
+                if first_line:
+                    line_list = line.split('\t')
+                    upload_message += line_list[0] + 2 * '\t' + line_list[1] + '\t'
+                    upload_message += line_list[2] + '\t' + line_list[3] + '\t' + line_list[4]
+                    first_line = False
+                else:
+                    line_list = line.split('\t')
+                    upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
+                    upload_message += line_list[2] + 2 * '\t' + line_list[3] + 2 * '\t'
+                    upload_message += line_list[4]
+
+        upload_message += '--------------------------\nOutput files for this run: \n\n'
+        if header + '.summary' in file_list:
+            upload_message += 'Summary file: {}.summary\n'.format(header)
+            file_list.remove(header + '.summary')
+
+        if header + '.marker' in file_list:
+            upload_message += 'Marker counts: {}.marker\n'.format(header)
+            file_list.remove(header + '.marker')
+
+        if header + '.marker_of_each_bin.tar.gz' in file_list:
+            upload_message += 'Marker genes for each bin: '
+            upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
+            file_list.remove(header + '.marker_of_each_bin.tar.gz')
+
+        if header + '.001.fasta' in file_list:
+            upload_message += 'Bin files: '
+            bin_file = []
+            for file_name in file_list:
+                if re.match(header + '\.\d{3}\.fasta', file_name):
+                    bin_file.append(file_name)
+
+            bin_file.sort()
+            upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
+            file_list = [item for item in file_list if item not in bin_file]
+
+        if header + '.noclass' in file_list:
+            upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
+            file_list.remove(header + '.noclass')
+
+        if header + '.tooshort' in file_list:
+            upload_message += 'Short sequences: {}.tooshort\n'.format(header)
+            file_list.remove(header + '.tooshort')
+
+        if header + '.log' in file_list:
+            upload_message += 'Log file: {}.log\n'.format(header)
+            file_list.remove(header + '.log')
+
+        if file_list:
+            upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
+
+        log('Report message:\n{}'.format(upload_message))
+
+        report_params = {
+              'message': upload_message,
+              'workspace_name': params.get('workspace_name'),
+              'report_object_name': 'kb_upload_mothods_report_' + uuid_string}
+
+        kbase_report_client = KBaseReport(self.callback_url, token=self.token)
+        output = kbase_report_client.create_extended_report(report_params)
+
+        report_output = {'report_name': output['name'], 'report_ref': output['ref']}
+
+        return report_output
+
     def __init__(self, config):
         self.callback_url = config['SDK_CALLBACK_URL']
         self.token = config['KB_AUTH_TOKEN']
@@ -235,11 +320,13 @@ class MaxBinUtil:
         log('Saved result files to: {}'.format(result_directory))
         log('Gernated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
 
+        reportVal = self._generate_report(result_directory, params)
+
         returnVal = {
             'result_directory': result_directory,
-            'obj_ref': 'obj_ref',
-            'report_name': 'report_name',
-            'report_ref': 'report_ref'
+            'obj_ref': 'obj_ref'
         }
+
+        returnVal.update(reportVal)
 
         return returnVal

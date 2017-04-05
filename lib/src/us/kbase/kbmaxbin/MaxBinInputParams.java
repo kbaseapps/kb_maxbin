@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * reads_list: reads file(s)/shock_id(s) in fasta or fastq format
  * optional params:
  * thread: number of threads; default 1
- * reassembly: specify this option if you want to reassemble the bins. 
+ * reassembly: specify this option if you want to reassemble the bins.
  *             note that at least one reads file needs to be designated.
  * prob_threshold: minimum probability for EM algorithm; default 0.8
  * markerset: choose between 107 marker genes by default or 40 marker genes
