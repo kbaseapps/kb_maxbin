@@ -193,20 +193,20 @@ class MaxBinUtil:
         file_list = os.listdir(result_directory)
         header = params.get('out_header')
 
-        # upload_message += '--------------------------\nSummary:\n\n'
-        # with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
-        #     first_line = True
-        #     lines = summary_file.readlines()
-        #     for line in lines:
-        #         if first_line:
-        #             line_list = line.split('\t')
-        #             upload_message += line_list[0] + 2 * '\t' + line_list[1] + '\t'
-        #             upload_message += line_list[3] + '\t' + line_list[4]
-        #             first_line = False
-        #         else:
-        #             line_list = line.split('\t')
-        #             upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
-        #             upload_message += line_list[3] + 2 * '\t' + line_list[4]
+        upload_message += '--------------------------\nSummary:\n\n'
+        with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
+            first_line = True
+            lines = summary_file.readlines()
+            for line in lines:
+                if first_line:
+                    line_list = line.split('\t')
+                    upload_message += line_list[0] + 2 * '\t' + line_list[1] + '\t'
+                    upload_message += line_list[3] + '\t' + line_list[4]
+                    first_line = False
+                else:
+                    line_list = line.split('\t')
+                    upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
+                    upload_message += line_list[3] + 2 * '\t' + line_list[4]
 
         # upload_message += '--------------------------\nOutput files for this run: \n\n'
         # if header + '.summary' in file_list:
