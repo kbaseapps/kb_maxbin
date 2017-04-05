@@ -151,7 +151,7 @@
                     "target_property": "abund_list/shock_id"
                 },
                 {
-                    "input_parameter": "soreads_listurce",
+                    "input_parameter": "reads_list",
                     "target_property": "reads_list/shock_id"
                 },
                 {
