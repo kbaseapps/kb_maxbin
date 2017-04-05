@@ -125,9 +125,15 @@ class MaxBinUtil:
 
         result_file_path = []
 
-        for file in file_list:
-            file_path = self._stage_file(file)
-            result_file_path.append(file_path)
+        if 'shock_id' in file_list:
+            for file in file_list.get('shock_id'):
+                file_path = self._stage_file({'shock_id': file})
+                result_file_path.append(file_path)
+
+        if 'path' in file_list:
+            for file in file_list.get('path'):
+                file_path = self._stage_file({'path': file})
+                result_file_path.append(file_path)
 
         log('Saving file path(s) to: {}'.format(result_file))
         with open(result_file, 'w') as file_handler:
@@ -161,8 +167,14 @@ class MaxBinUtil:
         if params.get('markerset'):
             command += '-markerset {} '.format(params.get('markerset'))
 
+        if params.get('min_contig_length'):
+            command += '-min_contig_length {} '.format(params.get('min_contig_length'))
+
+        if params.get('plotmarker'):
+            command += '-plotmarker '
+
         if params.get('reassembly'):
-            command += '-reassembly {} '.format(params.get('reassembly'))
+            command += '-reassembly '
 
         log('Generated run_MaxBin command: {}'.format(command))
 
@@ -233,6 +245,10 @@ class MaxBinUtil:
         if header + '.log' in file_list:
             upload_message += 'Log file: {}.log\n'.format(header)
             file_list.remove(header + '.log')
+
+        if header + '.marker.pdf' in file_list:
+            upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
+            file_list.remove(header + '.marker.pdf')
 
         if file_list:
             upload_message += 'Other files:\n{}'.format('\n'.join(file_list))

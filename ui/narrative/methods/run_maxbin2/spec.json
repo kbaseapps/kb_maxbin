@@ -53,36 +53,6 @@
             }
         },
         {
-            "id" : "thread",
-            "optional" : true,
-            "advanced" : true,
-            "allow_multiple" : false,
-            "default_values" : [ "" ],
-            "field_type" : "dropdown",
-            "dropdown_options": 
-            {
-                "options": 
-                [
-                    {
-                      "display": "1",
-                      "value": "1"
-                    },
-                    {
-                      "display": "2",
-                      "value": "2"
-                    },
-                    {
-                      "display": "3",
-                      "value": "3"
-                    },
-                    {
-                      "display": "4",
-                      "value": "4"
-                    }
-                ]
-            }
-        },
-        {
             "id": "prob_threshold",
             "optional": true,
             "advanced": true,
@@ -116,7 +86,18 @@
             }
         },
         {
-            "id": "reassembly",
+            "id": "min_contig_length",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "text",
+            "text_options": {
+                "validate_as" : "int"
+            }
+        },   
+        {
+            "id": "plotmarker",
             "optional":true,
             "advanced":true,
             "allow_multiple":false,
@@ -126,7 +107,7 @@
                 "checked_value": 1,
                 "unchecked_value": 0
             }
-        }   
+         }  
     ],
     "behavior": {
         "service-mapping": {
@@ -155,7 +136,7 @@
                     "target_property": "reads_list/shock_id"
                 },
                 {
-                    "input_parameter": "thread",
+                    "constant_value": 4,
                     "target_property": "thread"
                 },
                 {
@@ -167,8 +148,8 @@
                     "target_property": "markerset"
                 },
                 {
-                    "input_parameter": "reassembly",
-                    "target_property": "reassembly"
+                    "input_parameter": "min_contig_length",
+                    "target_property": "min_contig_length"
                 }
             ],
             "output_mapping": [

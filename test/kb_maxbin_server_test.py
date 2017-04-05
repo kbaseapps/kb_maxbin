@@ -258,41 +258,48 @@ class kb_maxbinTest(unittest.TestCase):
         shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
 
         # test absolute file path
-        abund_file_list = [{'path': abund_path}, {'path': abund_path}]
+        abund_file_list = {
+            'path': [abund_path, abund_path]
+        }
 
         abund_list_file = self.maxbin_runner._stage_file_list(abund_file_list)
 
         with open(abund_list_file) as file:
             result_file_list = file.readlines()
 
-        self.assertEquals(len(result_file_list), len(abund_file_list))
+        self.assertEquals(len(result_file_list), len(abund_file_list.get('path')))
         for item in result_file_list:
             file_path = item.partition('\n')[0]
             self.assertEquals(abund_filename, os.path.basename(file_path))
 
         # test shock id
         abund_shock_id = self.dfu.file_to_shock({'file_path': abund_path})['shock_id']
-        abund_file_list = [{'shock_id': abund_shock_id}, {'shock_id': abund_shock_id}]
+        abund_file_list = {
+            'shock_id': [abund_shock_id, abund_shock_id]
+        }
 
         abund_list_file = self.maxbin_runner._stage_file_list(abund_file_list)
 
         with open(abund_list_file) as file:
             result_file_list = file.readlines()
 
-        self.assertEquals(len(result_file_list), len(abund_file_list))
+        self.assertEquals(len(result_file_list), len(abund_file_list.get('shock_id')))
         for item in result_file_list:
             file_path = item.partition('\n')[0]
             self.assertEquals(abund_filename, os.path.basename(file_path))
 
         # test mix absolute file path and shock id
-        abund_file_list = [{'path': abund_path}, {'shock_id': abund_shock_id}]
+        abund_file_list = {
+            'shock_id': [abund_shock_id],
+            'path': [abund_path]
+        }
 
         abund_list_file = self.maxbin_runner._stage_file_list(abund_file_list)
 
         with open(abund_list_file) as file:
             result_file_list = file.readlines()
 
-        self.assertEquals(len(result_file_list), len(abund_file_list))
+        self.assertEquals(len(result_file_list), len(abund_file_list.keys()))
         for item in result_file_list:
             file_path = item.partition('\n')[0]
             self.assertEquals(abund_filename, os.path.basename(file_path))
@@ -341,13 +348,16 @@ class kb_maxbinTest(unittest.TestCase):
             'thread': 4,
             'prob_threshold': 0.5,
             'markerset': 40,
-            'reassembly': 1
+            'reassembly': 1,
+            'min_contig_length': 600,
+            'plotmarker': 1
         }
 
         expect_command = '/kb/deployment/bin/MaxBin/run_MaxBin.pl '
         expect_command += '-contig mycontig -out myout '
         expect_command += '-abund_list abund_list_file -reads_list reads_list_file '
-        expect_command += '-thread 4 -prob_threshold 0.5 -markerset 40 -reassembly 1 '
+        expect_command += '-thread 4 -prob_threshold 0.5 -markerset 40 '
+        expect_command += '-min_contig_length 600 -plotmarker -reassembly '
         command = self.maxbin_runner._generate_command(input_params)
         self.assertEquals(command, expect_command)
 
@@ -362,13 +372,15 @@ class kb_maxbinTest(unittest.TestCase):
         shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
 
         input_params = {
-          'contig_file': {'path': contig_path},
-          'out_header': 'out_header',
-          'workspace_name': self.getWsName(),
-          'abund_list': [{'path': abund_path}],
-          'thread': 2,
-          'prob_threshold': 0.5,
-          'markerset': 40
+            'contig_file': {'path': contig_path},
+            'out_header': 'out_header',
+            'workspace_name': self.getWsName(),
+            'abund_list': {'path': [abund_path]},
+            'thread': 4,
+            'prob_threshold': 0.5,
+            'markerset': 40,
+            'min_contig_length': 2000,
+            'plotmarker': 1
         }
 
         result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
