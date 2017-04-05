@@ -3,11 +3,12 @@
     "authors": [
         "dylan", "tgu2"
     ],
-    "contact": "",
+    "contact" : "help@kbase.us",
+    "visible" : true,
     "categories": ["active"],
     "widgets": {
         "input": "kbaseNarrativeMethodInput",
-        "output": "no-display"
+        "output" : "no-display"
     },
     "parameters": [ 
         {

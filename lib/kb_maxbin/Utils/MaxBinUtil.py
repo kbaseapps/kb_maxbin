@@ -258,9 +258,9 @@ class MaxBinUtil:
         report_params = {
               'message': upload_message,
               'workspace_name': params.get('workspace_name'),
-              'report_object_name': 'kb_upload_mothods_report_' + uuid_string}
+              'report_object_name': 'kb_maxbin_report_' + uuid_string}
 
-        kbase_report_client = KBaseReport(self.callback_url, token=self.token)
+        kbase_report_client = KBaseReport(self.callback_url)
         output = kbase_report_client.create_extended_report(report_params)
 
         report_output = {'report_name': output['name'], 'report_ref': output['ref']}
