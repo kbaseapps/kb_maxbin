@@ -1,14 +1,11 @@
 #
 # define display information
 #
-name: Method Name Here
-
-tooltip: |
-    Perform some kind of method
+name     : MaxBin
+subtitle : Run MaxBin2 app 
+tooltip  : Run MaxBin2 app 
 
 screenshots: []
-
-icon: icon.png
 
 #
 # define a set of similar methods that might be useful to the user
@@ -16,30 +13,62 @@ icon: icon.png
 suggestions:
     apps:
         related:
-            [app1, app2]
+            []
         next:
-            [app3, app4]
+            []
     methods:
         related:
-            [method1, method2]
+            []
         next:
-            [method3, method4]
+            []
 
 #
 # Configure the display and description of parameters
 #
 parameters :
-    parameter_1 :
-        ui-name : |
-            First parameter
-        short-hint : |
-            The first parameter
-        long-hint  : |
-            The first parameter that needs to be entered to drive the method. This might be the first of many.
+    contig_file :
+        ui-name : Contig File
+        short-hint : Contig file
+        long-hint  : Contig file
+
+    out_header :
+        ui-name : Output File Header
+        short-hint : Output file header
+        long-hint  : Output file header
+
+    abund_list :
+        ui-name : Abund File
+        short-hint : A list file of all contig abundance files
+        long-hint  : A list file of all contig abundance files
+
+    reads_list :
+        ui-name : Reads File
+        short-hint : A list file of all reads files
+        long-hint  : A list file of all reads files
+
+    thread :
+        ui-name : Thread
+        short-hint : Number of threads (default 1)
+        long-hint  : Number of threads (default 1)
+
+    prob_threshold :
+        ui-name : Probability
+        short-hint : Minimum probability for EM algorithm (default 0.8)
+        long-hint  : Minimum probability for EM algorithm (default 0.8)
+
+    markerset :
+        ui-name : Markerset
+        short-hint : Choose between 107 marker genes by default or 40 marker genes
+        long-hint  : Choose between 107 marker genes by default or 40 marker genes
+
+    reassembly :
+        ui-name : Reassembly
+        short-hint : Specify this option if you want to reassemble the bins
+        long-hint  : Specify this option if you want to reassemble the bins
 
 description : |
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed pulvinar efficitur felis, quis tincidunt sem congue at. Vivamus ornare feugiat faucibus. Fusce tincidunt mattis nunc, nec varius purus convallis quis. Nulla facilisi. In at magna dolor. Suspendisse sit amet felis at arcu auctor dapibus vitae pharetra dui. Nam semper mi quis tortor fermentum mollis. Donec a arcu pharetra, rutrum dolor vitae, rutrum mauris. Donec ornare fringilla sagittis. Nam laoreet est in elementum malesuada. Vestibulum id mi eget urna hendrerit feugiat. Donec et ultrices nulla. Phasellus diam eros, dapibus at tempus nec, semper vel ante.</p>
+    <p>MaxBin is a software that is capable of clustering metagenomic contigs into different bins, each consists of contigs from one species.</p>
 
-    <p>Curabitur auctor, metus at tristique euismod, odio elit tincidunt neque, a facilisis sem massa convallis dolor. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nunc ut hendrerit tellus. Nunc lacinia laoreet finibus. Etiam vitae sagittis enim. Fusce consectetur porta est eu pretium. In hac habitasse platea dictumst. Integer pellentesque sit amet sapien id venenatis. Nullam ac risus at orci eleifend aliquet. Vestibulum elit purus, euismod a nibh quis, pellentesque semper leo. Curabitur ullamcorper felis hendrerit nunc egestas, sit amet pharetra sapien porttitor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Maecenas hendrerit ipsum a ligula aliquet vestibulum. Duis a ante urna. Aenean ante neque, rhoncus id luctus ut, accumsan vel nunc.</p>
+    <p>MaxBin uses the nucleotide composition information and contig abundance information to do achieve binning through an Expectation-Maximization algorithm.</p>
 
-    <p>Pellentesque accumsan aliquet magna, id consectetur tellus condimentum eu. Suspendisse elit dui, ornare ac leo eget, tincidunt feugiat orci. Maecenas auctor gravida lacinia. Mauris interdum nisi vel gravida varius. Nullam tempus, purus eget posuere aliquet, odio elit semper massa, quis facilisis massa odio vitae lacus. Fusce varius enim a mi vehicula tempus. Maecenas faucibus tellus ipsum, at venenatis ipsum auctor et. Suspendisse sem mi, dignissim id porta efficitur, auctor eget magna. Vivamus varius purus nulla, porttitor euismod lorem cursus quis. Nulla sit amet eros nec sem ultrices pulvinar.</p>
+    <p>For more details: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt </p>

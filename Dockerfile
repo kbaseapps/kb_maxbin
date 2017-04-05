@@ -33,20 +33,18 @@ RUN pip install cffi --upgrade \
 
 # To install all the dependencies
 RUN apt-get install -y build-essential wget make curl unzip python
-# To download the Maxbin software and untar it
-RUN wget https://sourceforge.net/projects/maxbin/files/latest/download
-RUN tar xvf download
-# To set the Workdirectory
-WORKDIR /MaxBin-2.2
-# To make
-RUN cd /MaxBin-2.2/src && make
-# To install the dependencies for Maxbin
-RUN /MaxBin-2.2/autobuild_auxiliary
-# To change permission of the Maxbin script
-RUN chmod +x /MaxBin-2.2/run_MaxBin.pl
-# Entrypoint
-#ENTRYPOINT ["/MaxBin-2.2/run_MaxBin.pl"]
 
+# To download the Maxbin software and untar it
+RUN cd /kb/dev_container/modules && \
+    mkdir MaxBin && cd MaxBin && \
+    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.tar.gz/download &&\
+    tar xvf download && \
+    cd MaxBin-2.2/src && \
+    make && \
+    cd .. && \
+    ./autobuild_auxiliary && \
+    cd .. && \
+    cp -R MaxBin-2.2 /kb/deployment/bin/MaxBin
 
 # -----------------------------------------
 

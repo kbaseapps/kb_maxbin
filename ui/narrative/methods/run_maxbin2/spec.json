@@ -1,54 +1,201 @@
 {
     "ver": "0.0.1",
     "authors": [
-        "dylan"
+        "dylan", "tgu2"
     ],
     "contact": "",
     "categories": ["active"],
     "widgets": {
-        "input": null,
-        "output": null
+        "input": "kbaseNarrativeMethodInput",
+        "output": "no-display"
     },
     "parameters": [ 
         {
-            "id": "parameter_1",
+            "id": "contig_file",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type": "file",
+            "text_options": {
+                "valid_ws_types": [ ]
+            }
+        },
+        {  
+            "id": "out_header",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": [ "" ],
+            "field_type" : "text",
+            "text_options" : {}
+        },
+        {
+            "id": "abund_list",
             "optional": true,
             "advanced": false,
+            "allow_multiple": true,
+            "default_values": [ "" ],
+            "field_type": "file",
+            "text_options": {
+                "valid_ws_types": [ ]
+            }
+        },
+        {
+            "id": "reads_list",
+            "optional": true,
+            "advanced": false,
+            "allow_multiple": true,
+            "default_values": [ "" ],
+            "field_type": "file",
+            "text_options": {
+                "valid_ws_types": [ ]
+            }
+        },
+        {
+            "id" : "thread",
+            "optional" : true,
+            "advanced" : true,
+            "allow_multiple" : false,
+            "default_values" : [ "" ],
+            "field_type" : "dropdown",
+            "dropdown_options": 
+            {
+                "options": 
+                [
+                    {
+                      "display": "1",
+                      "value": "1"
+                    },
+                    {
+                      "display": "2",
+                      "value": "2"
+                    },
+                    {
+                      "display": "3",
+                      "value": "3"
+                    },
+                    {
+                      "display": "4",
+                      "value": "4"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "prob_threshold",
+            "optional": true,
+            "advanced": true,
             "allow_multiple": false,
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ ]
+                "validate_as" : "float"
             }
-        }
+        },
+        {
+            "id" : "markerset",
+            "optional" : true,
+            "advanced" : true,
+            "allow_multiple" : false,
+            "default_values" : [ "" ],
+            "field_type" : "dropdown",
+            "dropdown_options": 
+            {
+                "options": 
+                [
+                    {
+                      "display": "107",
+                      "value": "107"
+                    },
+                    {
+                      "display": "40",
+                      "value": "40"
+                    }
+                ]
+            }
+        },
+        {
+            "id": "reassembly",
+            "optional":true,
+            "advanced":true,
+            "allow_multiple":false,
+            "default_values":[""],
+            "field_type" : "checkbox",
+            "checkbox_options":{
+                "checked_value": 1,
+                "unchecked_value": 0
+            }
+        }   
     ],
     "behavior": {
         "service-mapping": {
             "url": "",
             "name": "kb_maxbin",
-            "method": "your_method",
+            "method": "run_max_bin",
             "input_mapping": [
                 {
                     "narrative_system_variable": "workspace",
-                    "target_argument_position": 0
+                    "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "parameter_1",
-                    "target_argument_position": 1
+                    "input_parameter": "contig_file",
+                    "target_property": "contig_file/shock_id"
+                },
+                {
+                    "input_parameter": "out_header",
+                    "target_property": "out_header"
+                },
+                {
+                    "input_parameter": "abund_list",
+                    "target_property": "abund_list/shock_id"
+                },
+                {
+                    "input_parameter": "reads_list",
+                    "target_property": "reads_list/shock_id"
+                },
+                {
+                    "input_parameter": "thread",
+                    "target_property": "thread"
+                },
+                {
+                    "input_parameter": "prob_threshold",
+                    "target_property": "prob_threshold"
+                },
+                {
+                    "input_parameter": "markerset",
+                    "target_property": "markerset"
+                },
+                {
+                    "input_parameter": "reassembly",
+                    "target_property": "reassembly"
                 }
             ],
             "output_mapping": [
                 {
-                    "service_method_output_path": [0],
-                    "target_property": "output"
-                },
-                {
-                    "input_parameter": "parameter_1",
-                    "target_property": "input"
-                },
-                {
                     "narrative_system_variable": "workspace",
-                    "target_property": "workspaceName"
+                    "target_property": "wsName"
+                },
+                {
+                    "service_method_output_path": [0, "result_directory"],
+                    "target_property": "result_directory"
+                },
+                {
+                    "service_method_output_path": [0,"obj_ref"],
+                    "target_property": "obj_ref",
+                    "target_type_transform": "resolved-ref"
+                },
+                {
+                    "service_method_output_path": [0, "report_name"],
+                    "target_property": "report_name"
+                },
+                {
+                    "service_method_output_path": [0, "report_ref"],
+                    "target_property": "report_ref"
+                },
+                {
+                    "constant_value": "16",
+                    "target_property": "report_window_line_height"
                 }
             ]
         }
