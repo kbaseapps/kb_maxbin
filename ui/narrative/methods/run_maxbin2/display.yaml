@@ -46,25 +46,25 @@ parameters :
         short-hint : A list file of all reads files
         long-hint  : A list file of all reads files
 
-    thread :
-        ui-name : Thread
-        short-hint : Number of threads (default 1)
-        long-hint  : Number of threads (default 1)
-
     prob_threshold :
         ui-name : Probability
-        short-hint : Minimum probability for EM algorithm (default 0.8)
-        long-hint  : Minimum probability for EM algorithm (default 0.8)
+        short-hint : Minimum probability for EM algorithm (default 0.9)
+        long-hint  : Minimum probability for EM algorithm (default 0.9)
 
     markerset :
-        ui-name : Markerset
+        ui-name : Markersets
         short-hint : Choose between 107 marker genes by default or 40 marker genes
         long-hint  : Choose between 107 marker genes by default or 40 marker genes
 
-    reassembly :
-        ui-name : Reassembly
-        short-hint : Specify this option if you want to reassemble the bins
-        long-hint  : Specify this option if you want to reassemble the bins
+    min_contig_length :
+        ui-name : Minimum Contig Length
+        short-hint : minimum contig length (default 1000)
+        long-hint  : minimum contig length (default 1000)
+
+    plotmarker:
+        ui-name : Plotmarker
+        short-hint : Specify this option if you want to plot the markers in each contig
+        long-hint  : Specify this option if you want to plot the markers in each cont
 
 description : |
     <p>MaxBin is a software that is capable of clustering metagenomic contigs into different bins, each consists of contigs from one species.</p>

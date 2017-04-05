@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  *             note that at least one reads file needs to be designated.
  * prob_threshold: minimum probability for EM algorithm; default 0.8
  * markerset: choose between 107 marker genes by default or 40 marker genes
+ * min_contig_length: minimum contig length; default 1000
+ * plotmarker: specify this option if you want to plot the markers in each contig
  * ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
  * </pre>
  * 
@@ -43,7 +45,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "thread",
     "reassembly",
     "prob_threshold",
-    "markerset"
+    "markerset",
+    "min_contig_length",
+    "plotmarker"
 })
 public class MaxBinInputParams {
 
@@ -72,6 +76,10 @@ public class MaxBinInputParams {
     private Double probThreshold;
     @JsonProperty("markerset")
     private Long markerset;
+    @JsonProperty("min_contig_length")
+    private Long minContigLength;
+    @JsonProperty("plotmarker")
+    private Long plotmarker;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
@@ -223,6 +231,36 @@ public class MaxBinInputParams {
         return this;
     }
 
+    @JsonProperty("min_contig_length")
+    public Long getMinContigLength() {
+        return minContigLength;
+    }
+
+    @JsonProperty("min_contig_length")
+    public void setMinContigLength(Long minContigLength) {
+        this.minContigLength = minContigLength;
+    }
+
+    public MaxBinInputParams withMinContigLength(Long minContigLength) {
+        this.minContigLength = minContigLength;
+        return this;
+    }
+
+    @JsonProperty("plotmarker")
+    public Long getPlotmarker() {
+        return plotmarker;
+    }
+
+    @JsonProperty("plotmarker")
+    public void setPlotmarker(Long plotmarker) {
+        this.plotmarker = plotmarker;
+    }
+
+    public MaxBinInputParams withPlotmarker(Long plotmarker) {
+        this.plotmarker = plotmarker;
+        return this;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -235,7 +273,7 @@ public class MaxBinInputParams {
 
     @Override
     public String toString() {
-        return ((((((((((((((((((((("MaxBinInputParams"+" [contigFile=")+ contigFile)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", abundList=")+ abundList)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((((("MaxBinInputParams"+" [contigFile=")+ contigFile)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", abundList=")+ abundList)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

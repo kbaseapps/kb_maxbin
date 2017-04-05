@@ -34,6 +34,8 @@ module kb_maxbin {
                     note that at least one reads file needs to be designated.
         prob_threshold: minimum probability for EM algorithm; default 0.8
         markerset: choose between 107 marker genes by default or 40 marker genes
+        min_contig_length: minimum contig length; default 1000
+        plotmarker: specify this option if you want to plot the markers in each contig
 
         ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
     */
@@ -49,6 +51,8 @@ module kb_maxbin {
         boolean reassembly;
         float prob_threshold;
         int markerset;
+        int min_contig_length;
+        boolean plotmarker;
     } MaxBinInputParams;
 
     /*
