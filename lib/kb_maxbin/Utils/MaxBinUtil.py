@@ -206,55 +206,54 @@ class MaxBinUtil:
         #         else:
         #             line_list = line.split('\t')
         #             upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
-        #             upload_message += line_list[3] + 2 * '\t'
-        #             upload_message += line_list[4]
+        #             upload_message += line_list[3] + 2 * '\t' + line_list[4]
 
-        upload_message += '--------------------------\nOutput files for this run: \n\n'
-        if header + '.summary' in file_list:
-            upload_message += 'Summary file: {}.summary\n'.format(header)
-            file_list.remove(header + '.summary')
+        # upload_message += '--------------------------\nOutput files for this run: \n\n'
+        # if header + '.summary' in file_list:
+        #     upload_message += 'Summary file: {}.summary\n'.format(header)
+        #     file_list.remove(header + '.summary')
 
-        if header + '.marker' in file_list:
-            upload_message += 'Marker counts: {}.marker\n'.format(header)
-            file_list.remove(header + '.marker')
+        # if header + '.marker' in file_list:
+        #     upload_message += 'Marker counts: {}.marker\n'.format(header)
+        #     file_list.remove(header + '.marker')
 
-        if header + '.marker_of_each_bin.tar.gz' in file_list:
-            upload_message += 'Marker genes for each bin: '
-            upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
-            file_list.remove(header + '.marker_of_each_bin.tar.gz')
+        # if header + '.marker_of_each_bin.tar.gz' in file_list:
+        #     upload_message += 'Marker genes for each bin: '
+        #     upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
+        #     file_list.remove(header + '.marker_of_each_bin.tar.gz')
 
-        if header + '.001.fasta' in file_list:
-            upload_message += 'Bin files: '
-            bin_file = []
-            for file_name in file_list:
-                if re.match(header + '\.\d{3}\.fasta', file_name):
-                    bin_file.append(file_name)
+        # if header + '.001.fasta' in file_list:
+        #     upload_message += 'Bin files: '
+        #     bin_file = []
+        #     for file_name in file_list:
+        #         if re.match(header + '\.\d{3}\.fasta', file_name):
+        #             bin_file.append(file_name)
 
-            bin_file.sort()
-            upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
-            file_list = [item for item in file_list if item not in bin_file]
+        #     bin_file.sort()
+        #     upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
+        #     file_list = [item for item in file_list if item not in bin_file]
 
-        if header + '.noclass' in file_list:
-            upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
-            file_list.remove(header + '.noclass')
+        # if header + '.noclass' in file_list:
+        #     upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
+        #     file_list.remove(header + '.noclass')
 
-        if header + '.tooshort' in file_list:
-            upload_message += 'Short sequences: {}.tooshort\n'.format(header)
-            file_list.remove(header + '.tooshort')
+        # if header + '.tooshort' in file_list:
+        #     upload_message += 'Short sequences: {}.tooshort\n'.format(header)
+        #     file_list.remove(header + '.tooshort')
 
-        if header + '.log' in file_list:
-            upload_message += 'Log file: {}.log\n'.format(header)
-            file_list.remove(header + '.log')
+        # if header + '.log' in file_list:
+        #     upload_message += 'Log file: {}.log\n'.format(header)
+        #     file_list.remove(header + '.log')
 
-        if header + '.marker.pdf' in file_list:
-            upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
-            file_list.remove(header + '.marker.pdf')
+        # if header + '.marker.pdf' in file_list:
+        #     upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
+        #     file_list.remove(header + '.marker.pdf')
 
-        if file_list:
-            upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
+        # if file_list:
+        #     upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
 
         log('Report message:\n{}'.format(upload_message))
-        upload_message = 'report'
+
         report_params = {
               'message': upload_message,
               'workspace_name': params.get('workspace_name'),
