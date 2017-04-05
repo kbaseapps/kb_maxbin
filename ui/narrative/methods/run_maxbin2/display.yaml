@@ -64,7 +64,7 @@ parameters :
     plotmarker:
         ui-name : Plotmarker
         short-hint : Specify this option if you want to plot the markers in each contig
-        long-hint  : Specify this option if you want to plot the markers in each cont
+        long-hint  : Specify this option if you want to plot the markers in each contig
 
 description : |
     <p>MaxBin is a software that is capable of clustering metagenomic contigs into different bins, each consists of contigs from one species.</p>

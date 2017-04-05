@@ -356,8 +356,8 @@ class kb_maxbinTest(unittest.TestCase):
         expect_command = '/kb/deployment/bin/MaxBin/run_MaxBin.pl '
         expect_command += '-contig mycontig -out myout '
         expect_command += '-abund_list abund_list_file -reads_list reads_list_file '
-        expect_command += '-thread 4 -prob_threshold 0.5 -markerset 40 -reassembly '
-        expect_command += '-min_contig_length 600 -plotmarker '
+        expect_command += '-thread 4 -prob_threshold 0.5 -markerset 40 '
+        expect_command += '-min_contig_length 600 -plotmarker -reassembly '
         command = self.maxbin_runner._generate_command(input_params)
         self.assertEquals(command, expect_command)
 
