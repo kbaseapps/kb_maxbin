@@ -262,7 +262,7 @@ class MaxBinUtil:
 
         report_params = {
               'message': upload_message,
-              'summary_window_height': 56.0,
+              'summary_window_height': 120.0,
               'workspace_name': params.get('workspace_name'),
               'report_object_name': 'kb_maxbin_report_' + uuid_string}
 
