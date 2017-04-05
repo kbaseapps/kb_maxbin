@@ -201,12 +201,12 @@ class MaxBinUtil:
         #         if first_line:
         #             line_list = line.split('\t')
         #             upload_message += line_list[0] + 2 * '\t' + line_list[1] + '\t'
-        #             upload_message += line_list[2] + '\t' + line_list[3] + '\t' + line_list[4]
+        #             upload_message += line_list[3] + '\t' + line_list[4]
         #             first_line = False
         #         else:
         #             line_list = line.split('\t')
         #             upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
-        #             upload_message += line_list[2] + 2 * '\t' + line_list[3] + 2 * '\t'
+        #             upload_message += line_list[3] + 2 * '\t'
         #             upload_message += line_list[4]
 
         upload_message += '--------------------------\nOutput files for this run: \n\n'
@@ -254,7 +254,7 @@ class MaxBinUtil:
             upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
 
         log('Report message:\n{}'.format(upload_message))
-
+        upload_message = 'report'
         report_params = {
               'message': upload_message,
               'workspace_name': params.get('workspace_name'),
