@@ -125,9 +125,15 @@ class MaxBinUtil:
 
         result_file_path = []
 
-        for file in file_list:
-            file_path = self._stage_file(file)
-            result_file_path.append(file_path)
+        if 'shock_id' in file_list:
+            for file in file_list.get('shock_id'):
+                file_path = self._stage_file({'shock_id': file})
+                result_file_path.append(file_path)
+
+        if 'path' in file_list:
+            for file in file_list.get('path'):
+                file_path = self._stage_file({'path': file})
+                result_file_path.append(file_path)
 
         log('Saving file path(s) to: {}'.format(result_file))
         with open(result_file, 'w') as file_handler:
@@ -161,8 +167,14 @@ class MaxBinUtil:
         if params.get('markerset'):
             command += '-markerset {} '.format(params.get('markerset'))
 
+        if params.get('min_contig_length'):
+            command += '-min_contig_length {} '.format(params.get('min_contig_length'))
+
+        if params.get('plotmarker'):
+            command += '-plotmarker '
+
         if params.get('reassembly'):
-            command += '-reassembly {} '.format(params.get('reassembly'))
+            command += '-reassembly '
 
         log('Generated run_MaxBin command: {}'.format(command))
 
@@ -183,24 +195,31 @@ class MaxBinUtil:
 
         upload_message += '--------------------------\nSummary:\n\n'
         with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
-            first_line = True
             lines = summary_file.readlines()
             for line in lines:
-                if first_line:
-                    line_list = line.split('\t')
-                    upload_message += line_list[0] + 2 * '\t' + line_list[1] + '\t'
-                    upload_message += line_list[2] + '\t' + line_list[3] + '\t' + line_list[4]
-                    first_line = False
+                line_list = line.split('\t')
+                if len(line_list) == 5:
+                    upload_message += '{:{number}} {:10} {:15} {:15} {}'.format(
+                                                        line_list[0], line_list[1],
+                                                        line_list[2], line_list[3],
+                                                        line_list[4], number=len(header)+12)
+                elif len(line_list) == 4:
+                    upload_message += '{:{number}} {:15} {:15} {}'.format(
+                                                        line_list[0], line_list[1],
+                                                        line_list[2], line_list[3],
+                                                        number=len(header)+12)
                 else:
-                    line_list = line.split('\t')
-                    upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
-                    upload_message += line_list[2] + 2 * '\t' + line_list[3] + 2 * '\t'
-                    upload_message += line_list[4]
+                    upload_message = upload_message.replace(
+                                            '--------------------------\nSummary:\n\n', '')
 
-        upload_message += '--------------------------\nOutput files for this run: \n\n'
+        upload_message += '\n--------------------------\nOutput files for this run:\n\n'
         if header + '.summary' in file_list:
             upload_message += 'Summary file: {}.summary\n'.format(header)
             file_list.remove(header + '.summary')
+
+        if header + '.abundance' in file_list:
+            upload_message += 'Genome abundance info file: {}.abundance\n'.format(header)
+            file_list.remove(header + '.abundance')
 
         if header + '.marker' in file_list:
             upload_message += 'Marker counts: {}.marker\n'.format(header)
@@ -234,6 +253,10 @@ class MaxBinUtil:
             upload_message += 'Log file: {}.log\n'.format(header)
             file_list.remove(header + '.log')
 
+        if header + '.marker.pdf' in file_list:
+            upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
+            file_list.remove(header + '.marker.pdf')
+
         if file_list:
             upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
 
@@ -241,10 +264,11 @@ class MaxBinUtil:
 
         report_params = {
               'message': upload_message,
+              'summary_window_height': 166.0,
               'workspace_name': params.get('workspace_name'),
-              'report_object_name': 'kb_upload_mothods_report_' + uuid_string}
+              'report_object_name': 'kb_maxbin_report_' + uuid_string}
 
-        kbase_report_client = KBaseReport(self.callback_url, token=self.token)
+        kbase_report_client = KBaseReport(self.callback_url)
         output = kbase_report_client.create_extended_report(report_params)
 
         report_output = {'report_name': output['name'], 'report_ref': output['ref']}

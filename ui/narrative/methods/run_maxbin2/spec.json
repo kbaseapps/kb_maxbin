@@ -3,11 +3,12 @@
     "authors": [
         "dylan", "tgu2"
     ],
-    "contact": "",
+    "contact" : "help@kbase.us",
+    "visible" : true,
     "categories": ["active"],
     "widgets": {
         "input": "kbaseNarrativeMethodInput",
-        "output": "no-display"
+        "output" : "no-display"
     },
     "parameters": [ 
         {
@@ -53,41 +54,11 @@
             }
         },
         {
-            "id" : "thread",
-            "optional" : true,
-            "advanced" : true,
-            "allow_multiple" : false,
-            "default_values" : [ "" ],
-            "field_type" : "dropdown",
-            "dropdown_options": 
-            {
-                "options": 
-                [
-                    {
-                      "display": "1",
-                      "value": "1"
-                    },
-                    {
-                      "display": "2",
-                      "value": "2"
-                    },
-                    {
-                      "display": "3",
-                      "value": "3"
-                    },
-                    {
-                      "display": "4",
-                      "value": "4"
-                    }
-                ]
-            }
-        },
-        {
             "id": "prob_threshold",
             "optional": true,
             "advanced": true,
             "allow_multiple": false,
-            "default_values": [ "" ],
+            "default_values": [ "0.9" ],
             "field_type": "text",
             "text_options": {
                 "validate_as" : "float"
@@ -98,25 +69,36 @@
             "optional" : true,
             "advanced" : true,
             "allow_multiple" : false,
-            "default_values" : [ "" ],
+            "default_values" : [ "107" ],
             "field_type" : "dropdown",
             "dropdown_options": 
             {
                 "options": 
                 [
                     {
-                      "display": "107",
+                      "display": "107 Bacterial Marker Gene Set",
                       "value": "107"
                     },
                     {
-                      "display": "40",
+                      "display": "40 Bacterial and Archaeal Marker Gene Set",
                       "value": "40"
                     }
                 ]
             }
         },
         {
-            "id": "reassembly",
+            "id": "min_contig_length",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ "1000" ],
+            "field_type": "text",
+            "text_options": {
+                "validate_as" : "int"
+            }
+        },   
+        {
+            "id": "plotmarker",
             "optional":true,
             "advanced":true,
             "allow_multiple":false,
@@ -126,7 +108,7 @@
                 "checked_value": 1,
                 "unchecked_value": 0
             }
-        }   
+         }  
     ],
     "behavior": {
         "service-mapping": {
@@ -155,7 +137,7 @@
                     "target_property": "reads_list/shock_id"
                 },
                 {
-                    "input_parameter": "thread",
+                    "constant_value": 4,
                     "target_property": "thread"
                 },
                 {
@@ -167,8 +149,8 @@
                     "target_property": "markerset"
                 },
                 {
-                    "input_parameter": "reassembly",
-                    "target_property": "reassembly"
+                    "input_parameter": "min_contig_length",
+                    "target_property": "min_contig_length"
                 }
             ],
             "output_mapping": [
@@ -182,8 +164,7 @@
                 },
                 {
                     "service_method_output_path": [0,"obj_ref"],
-                    "target_property": "obj_ref",
-                    "target_type_transform": "resolved-ref"
+                    "target_property": "obj_ref"
                 },
                 {
                     "service_method_output_path": [0, "report_name"],
@@ -194,7 +175,7 @@
                     "target_property": "report_ref"
                 },
                 {
-                    "constant_value": "16",
+                    "constant_value": "36",
                     "target_property": "report_window_line_height"
                 }
             ]

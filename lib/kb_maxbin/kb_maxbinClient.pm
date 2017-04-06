@@ -131,6 +131,8 @@ MaxBinInputParams is a reference to a hash where the following keys are defined:
 	reassembly has a value which is a kb_maxbin.boolean
 	prob_threshold has a value which is a float
 	markerset has a value which is an int
+	min_contig_length has a value which is an int
+	plotmarker has a value which is a kb_maxbin.boolean
 File is a reference to a hash where the following keys are defined:
 	path has a value which is a string
 	shock_id has a value which is a string
@@ -159,6 +161,8 @@ MaxBinInputParams is a reference to a hash where the following keys are defined:
 	reassembly has a value which is a kb_maxbin.boolean
 	prob_threshold has a value which is a float
 	markerset has a value which is an int
+	min_contig_length has a value which is an int
+	plotmarker has a value which is a kb_maxbin.boolean
 File is a reference to a hash where the following keys are defined:
 	path has a value which is a string
 	shock_id has a value which is a string
@@ -407,6 +411,8 @@ reassembly: specify this option if you want to reassemble the bins.
             note that at least one reads file needs to be designated.
 prob_threshold: minimum probability for EM algorithm; default 0.8
 markerset: choose between 107 marker genes by default or 40 marker genes
+min_contig_length: minimum contig length; default 1000
+plotmarker: specify this option if you want to plot the markers in each contig
 
 ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
 
@@ -426,6 +432,8 @@ thread has a value which is an int
 reassembly has a value which is a kb_maxbin.boolean
 prob_threshold has a value which is a float
 markerset has a value which is an int
+min_contig_length has a value which is an int
+plotmarker has a value which is a kb_maxbin.boolean
 
 </pre>
 
@@ -443,6 +451,8 @@ thread has a value which is an int
 reassembly has a value which is a kb_maxbin.boolean
 prob_threshold has a value which is a float
 markerset has a value which is an int
+min_contig_length has a value which is an int
+plotmarker has a value which is a kb_maxbin.boolean
 
 
 =end text
