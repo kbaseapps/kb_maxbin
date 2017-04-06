@@ -32,25 +32,14 @@
             "text_options" : {}
         },
         {
-            "id": "abund_list",
-            "optional": true,
-            "advanced": false,
-            "allow_multiple": true,
-            "default_values": [ "" ],
-            "field_type": "file",
-            "text_options": {
-                "valid_ws_types": [ ]
-            }
-        },
-        {
-            "id": "reads_list",
-            "optional": true,
-            "advanced": false,
-            "allow_multiple": true,
-            "default_values": [ "" ],
-            "field_type": "file",
-            "text_options": {
-                "valid_ws_types": [ ]
+            "id" : "reads_list",
+            "optional" : false,
+            "advanced" : false,
+            "allow_multiple" : true,
+            "default_values" : [ "" ],
+            "field_type" : "text",
+            "text_options" : {
+              "valid_ws_types" : ["KBaseAssembly.PairedEndLibrary", "KBaseAssembly.SingleEndLibrary"]
             }
         },
         {
@@ -129,12 +118,9 @@
                     "target_property": "out_header"
                 },
                 {
-                    "input_parameter": "abund_list",
-                    "target_property": "abund_list/shock_id"
-                },
-                {
                     "input_parameter": "reads_list",
-                    "target_property": "reads_list/shock_id"
+                    "target_type_transform": "list<ref>",
+                    "target_property": "reads_list"
                 },
                 {
                     "constant_value": 4,
@@ -151,6 +137,10 @@
                 {
                     "input_parameter": "min_contig_length",
                     "target_property": "min_contig_length"
+                },
+                {
+                    "input_parameter": "plotmarker",
+                    "target_property": "plotmarker"
                 }
             ],
             "output_mapping": [

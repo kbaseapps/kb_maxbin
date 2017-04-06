@@ -1,9 +1,9 @@
 #
 # define display information
 #
-name     : MaxBin
-subtitle : Run MaxBin2 app 
-tooltip  : Run MaxBin2 app 
+name     : MaxBin2 - Contig Binning
+subtitle : Bin assembled metagenomic contigs by taxonomy
+tooltip  : Bin assembled metagenomic contigs by taxonomy
 
 screenshots: []
 
@@ -36,15 +36,10 @@ parameters :
         short-hint : Output file header
         long-hint  : Output file header
 
-    abund_list :
-        ui-name : Abund File
-        short-hint : A list file of all contig abundance files
-        long-hint  : A list file of all contig abundance files
-
     reads_list :
-        ui-name : Reads File
-        short-hint : A list file of all reads files
-        long-hint  : A list file of all reads files
+        ui-name : Reads Library Object
+        short-hint : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
+        long-hint  : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
 
     prob_threshold :
         ui-name : Probability Threshold
@@ -61,7 +56,7 @@ parameters :
         short-hint : minimum contig length (default 1000)
         long-hint  : minimum contig length (default 1000)
 
-    plotmarker:
+    plotmarker :
         ui-name : Plotmarker
         short-hint : Specify this option if you want to plot the markers in each contig
         long-hint  : Specify this option if you want to plot the markers in each contig
