@@ -361,7 +361,7 @@ class kb_maxbinTest(unittest.TestCase):
         command = self.maxbin_runner._generate_command(input_params)
         self.assertEquals(command, expect_command)
 
-    def test_simple_run_maxbin(self):
+    def test_run_maxbin_file_path(self):
 
         contig_filename = '20x.scaffold.gz'
         contig_path = os.path.join(self.scratch, contig_filename)
@@ -400,5 +400,95 @@ class kb_maxbinTest(unittest.TestCase):
             'out_header.noclass',
             'out_header.summary',
             'out_header.tooshort']
+
+        self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
+
+    def test_run_maxbin_shock_id(self):
+
+        contig_filename = '20x.scaffold.gz'
+        contig_path = os.path.join(self.scratch, contig_filename)
+        shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
+        contig_shock_id = self.dfu.file_to_shock({'file_path': contig_path})['shock_id']
+
+        abund_filename = '20x.abund'
+        abund_path = os.path.join(self.scratch, abund_filename)
+        shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
+        abund_shock_id = self.dfu.file_to_shock({'file_path': abund_path})['shock_id']
+
+        input_params = {
+            'contig_file': {'shock_id': contig_shock_id},
+            'out_header': 'out_header',
+            'workspace_name': self.getWsName(),
+            'abund_list': {'shock_id': [abund_shock_id]},
+            'thread': 4,
+            'prob_threshold': 0.5,
+            'markerset': 40,
+            'min_contig_length': 2000,
+            'plotmarker': 1
+        }
+
+        result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        self.assertTrue('obj_ref' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
+
+        expect_files = [
+            'out_header.001.fasta',
+            'out_header.002.fasta',
+            'out_header.003.fasta',
+            'out_header.log',
+            'out_header.marker',
+            'out_header.marker_of_each_bin.tar.gz',
+            'out_header.noclass',
+            'out_header.summary',
+            'out_header.tooshort']
+
+        self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
+
+    def test_run_maxbin_multi_abund(self):
+
+        contig_filename = '20x.scaffold.gz'
+        contig_path = os.path.join(self.scratch, contig_filename)
+        shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
+        contig_shock_id = self.dfu.file_to_shock({'file_path': contig_path})['shock_id']
+
+        abund_filename = '20x.abund'
+        abund_path = os.path.join(self.scratch, abund_filename)
+        shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
+        abund_shock_id = self.dfu.file_to_shock({'file_path': abund_path})['shock_id']
+
+        input_params = {
+            'contig_file': {'shock_id': contig_shock_id},
+            'out_header': 'maxbin_output',
+            'workspace_name': self.getWsName(),
+            'abund_list': {'shock_id': [abund_shock_id, abund_shock_id],
+                           'path': [abund_path, abund_path]},
+            'thread': 4,
+            'prob_threshold': 0.5,
+            'markerset': 40,
+            'min_contig_length': 2000,
+            'plotmarker': 1
+        }
+
+        result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        self.assertTrue('obj_ref' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
+
+        expect_files = [
+            'maxbin_output.001.fasta',
+            'maxbin_output.002.fasta',
+            'maxbin_output.003.fasta',
+            'maxbin_output.abundance',
+            'maxbin_output.log',
+            'maxbin_output.marker',
+            'maxbin_output.marker_of_each_bin.tar.gz',
+            'maxbin_output.noclass',
+            'maxbin_output.summary',
+            'maxbin_output.tooshort']
 
         self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)

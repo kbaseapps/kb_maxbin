@@ -193,31 +193,33 @@ class MaxBinUtil:
         file_list = os.listdir(result_directory)
         header = params.get('out_header')
 
-        length = len(header)
-        if length < 4:
-            tab = 1
-        else:
-            tab = length / 4
-
         upload_message += '--------------------------\nSummary:\n\n'
         with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
-            first_line = True
             lines = summary_file.readlines()
             for line in lines:
-                if first_line:
-                    line_list = line.split('\t')
-                    upload_message += line_list[0] + tab * '\t' + line_list[1] + '\t'
-                    upload_message += line_list[3] + '\t' + line_list[4]
-                    first_line = False
+                line_list = line.split('\t')
+                if len(line_list) == 5:
+                    upload_message += '{:{number}} {:10} {:15} {:15} {}'.format(
+                                                        line_list[0], line_list[1],
+                                                        line_list[2], line_list[3],
+                                                        line_list[4], number=len(header)+12)
+                elif len(line_list) == 4:
+                    upload_message += '{:{number}} {:15} {:15} {}'.format(
+                                                        line_list[0], line_list[1],
+                                                        line_list[2], line_list[3],
+                                                        number=len(header)+12)
                 else:
-                    line_list = line.split('\t')
-                    upload_message += line_list[0] + '\t' + line_list[1] + 2 * '\t'
-                    upload_message += line_list[3] + 2 * '\t' + line_list[4]
+                    upload_message = upload_message.replace(
+                                            '--------------------------\nSummary:\n\n', '')
 
-        upload_message += '--------------------------\nOutput files for this run: \n\n'
+        upload_message += '\n--------------------------\nOutput files for this run:\n\n'
         if header + '.summary' in file_list:
             upload_message += 'Summary file: {}.summary\n'.format(header)
             file_list.remove(header + '.summary')
+
+        if header + '.abundance' in file_list:
+            upload_message += 'Genome abundance info file: {}.abundance\n'.format(header)
+            file_list.remove(header + '.abundance')
 
         if header + '.marker' in file_list:
             upload_message += 'Marker counts: {}.marker\n'.format(header)
@@ -262,7 +264,7 @@ class MaxBinUtil:
 
         report_params = {
               'message': upload_message,
-              'summary_window_height': 136.0,
+              'summary_window_height': 166.0,
               'workspace_name': params.get('workspace_name'),
               'report_object_name': 'kb_maxbin_report_' + uuid_string}
 
