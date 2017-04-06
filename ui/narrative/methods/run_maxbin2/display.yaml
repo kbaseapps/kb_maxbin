@@ -47,14 +47,14 @@ parameters :
         long-hint  : A list file of all reads files
 
     prob_threshold :
-        ui-name : Probability
+        ui-name : Probability Threshold
         short-hint : Minimum probability for EM algorithm (default 0.9)
-        long-hint  : Minimum probability for EM algorithm (default 0.9)
+        long-hint  : Minimum probability for EM algorithm (default 0.9). Sequences that do not meet the threshold are discarded as 'unclassified'.
 
     markerset :
         ui-name : Markersets
         short-hint : Choose between 107 marker genes by default or 40 marker genes
-        long-hint  : Choose between 107 marker genes by default or 40 marker genes
+        long-hint  : By default MaxBin will look for 107 marker genes present in >95% of bacteria. Alternatively you can also choose 40 marker gene sets that are universal among bacteria and archaea.
 
     min_contig_length :
         ui-name : Minimum Contig Length
