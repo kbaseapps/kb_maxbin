@@ -76,12 +76,12 @@
                 "options": 
                 [
                     {
-                      "display": "107",
-                      "value": "107 Bacterial Marker Gene Set"
+                      "display": "107 Bacterial Marker Gene Set",
+                      "value": "107"
                     },
                     {
-                      "display": "40",
-                      "value": "40 Bacterial and Archaeal Marker Gene Set"
+                      "display": "40 Bacterial and Archaeal Marker Gene Set",
+                      "value": "40"
                     }
                 ]
             }
