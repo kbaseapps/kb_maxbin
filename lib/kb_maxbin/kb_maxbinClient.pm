@@ -123,10 +123,10 @@ $params is a kb_maxbin.MaxBinInputParams
 $returnVal is a kb_maxbin.MaxBinResult
 MaxBinInputParams is a reference to a hash where the following keys are defined:
 	contig_file has a value which is a kb_maxbin.File
+	assembly_ref has a value which is a kb_maxbin.assembly_ref
 	out_header has a value which is a string
 	workspace_name has a value which is a string
-	abund_list has a value which is a reference to a list where each element is a kb_maxbin.File
-	reads_list has a value which is a reference to a list where each element is a kb_maxbin.File
+	reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
 	thread has a value which is an int
 	reassembly has a value which is a kb_maxbin.boolean
 	prob_threshold has a value which is a float
@@ -136,6 +136,8 @@ MaxBinInputParams is a reference to a hash where the following keys are defined:
 File is a reference to a hash where the following keys are defined:
 	path has a value which is a string
 	shock_id has a value which is a string
+assembly_ref is a string
+reads_ref is a string
 boolean is an int
 MaxBinResult is a reference to a hash where the following keys are defined:
 	result_directory has a value which is a string
@@ -153,10 +155,10 @@ $params is a kb_maxbin.MaxBinInputParams
 $returnVal is a kb_maxbin.MaxBinResult
 MaxBinInputParams is a reference to a hash where the following keys are defined:
 	contig_file has a value which is a kb_maxbin.File
+	assembly_ref has a value which is a kb_maxbin.assembly_ref
 	out_header has a value which is a string
 	workspace_name has a value which is a string
-	abund_list has a value which is a reference to a list where each element is a kb_maxbin.File
-	reads_list has a value which is a reference to a list where each element is a kb_maxbin.File
+	reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
 	thread has a value which is an int
 	reassembly has a value which is a kb_maxbin.boolean
 	prob_threshold has a value which is a float
@@ -166,6 +168,8 @@ MaxBinInputParams is a reference to a hash where the following keys are defined:
 File is a reference to a hash where the following keys are defined:
 	path has a value which is a string
 	shock_id has a value which is a string
+assembly_ref is a string
+reads_ref is a string
 boolean is an int
 MaxBinResult is a reference to a hash where the following keys are defined:
 	result_directory has a value which is a string
@@ -351,6 +355,175 @@ an int
 
 
 
+=head2 assembly_ref
+
+=over 4
+
+
+
+=item Description
+
+An X/Y/Z style reference
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 reads_ref
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 bin_id
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 contig_id
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 contig_obj_ref
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a string
+</pre>
+
+=end html
+
+=begin text
+
+a string
+
+=end text
+
+=back
+
+
+
+=head2 BinnedAssembly
+
+=over 4
+
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+bin_ids has a value which is a reference to a list where each element is a kb_maxbin.bin_id
+bin2contig_id has a value which is a reference to a hash where the key is a kb_maxbin.bin_id and the value is a reference to a list where each element is a kb_maxbin.contig_id
+contig_id2contig_ref has a value which is a reference to a hash where the key is a kb_maxbin.contig_id and the value is a kb_maxbin.contig_obj_ref
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+bin_ids has a value which is a reference to a list where each element is a kb_maxbin.bin_id
+bin2contig_id has a value which is a reference to a hash where the key is a kb_maxbin.bin_id and the value is a reference to a list where each element is a kb_maxbin.contig_id
+contig_id2contig_ref has a value which is a reference to a hash where the key is a kb_maxbin.contig_id and the value is a kb_maxbin.contig_obj_ref
+
+
+=end text
+
+=back
+
+
+
 =head2 File
 
 =over 4
@@ -398,12 +571,10 @@ shock_id has a value which is a string
 
 required params:
 contig_file: contig file path/shock_id in File structure
+assembly_ref: Genome assembly object reference
 out_header: output file header
 workspace_name: the name of the workspace it gets saved to.
-
-semi-required: at least one of the following parameters is needed
-abund_list: contig abundance file(s)/shock_id(s)
-reads_list: reads file(s)/shock_id(s) in fasta or fastq format
+reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
 
 optional params:
 thread: number of threads; default 1
@@ -424,10 +595,10 @@ ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
 <pre>
 a reference to a hash where the following keys are defined:
 contig_file has a value which is a kb_maxbin.File
+assembly_ref has a value which is a kb_maxbin.assembly_ref
 out_header has a value which is a string
 workspace_name has a value which is a string
-abund_list has a value which is a reference to a list where each element is a kb_maxbin.File
-reads_list has a value which is a reference to a list where each element is a kb_maxbin.File
+reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
 thread has a value which is an int
 reassembly has a value which is a kb_maxbin.boolean
 prob_threshold has a value which is a float
@@ -443,10 +614,10 @@ plotmarker has a value which is a kb_maxbin.boolean
 
 a reference to a hash where the following keys are defined:
 contig_file has a value which is a kb_maxbin.File
+assembly_ref has a value which is a kb_maxbin.assembly_ref
 out_header has a value which is a string
 workspace_name has a value which is a string
-abund_list has a value which is a reference to a list where each element is a kb_maxbin.File
-reads_list has a value which is a reference to a list where each element is a kb_maxbin.File
+reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
 thread has a value which is an int
 reassembly has a value which is a kb_maxbin.boolean
 prob_threshold has a value which is a float

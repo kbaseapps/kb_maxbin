@@ -3,7 +3,6 @@ import unittest
 import os  # noqa: F401
 import json  # noqa: F401
 import time
-import requests
 import shutil
 
 from os import environ
@@ -20,6 +19,7 @@ from kb_maxbin.kb_maxbinServer import MethodContext
 from kb_maxbin.authclient import KBaseAuth as _KBaseAuth
 from kb_maxbin.Utils.MaxBinUtil import MaxBinUtil
 from DataFileUtil.DataFileUtilClient import DataFileUtil
+from ReadsUtils.ReadsUtilsClient import ReadsUtils
 
 
 class kb_maxbinTest(unittest.TestCase):
@@ -53,7 +53,11 @@ class kb_maxbinTest(unittest.TestCase):
         cls.serviceImpl = kb_maxbin(cls.cfg)
         cls.scratch = cls.cfg['scratch']
         cls.callback_url = os.environ['SDK_CALLBACK_URL']
+        suffix = int(time.time() * 1000)
+        wsName = "test_kb_maxbin_" + str(suffix)
+        cls.ws_info = cls.wsClient.create_workspace({'workspace': wsName})
         cls.dfu = DataFileUtil(os.environ['SDK_CALLBACK_URL'], token=cls.token)
+        cls.ru = ReadsUtils(os.environ['SDK_CALLBACK_URL'], token=cls.token)
         cls.maxbin_runner = MaxBinUtil(cls.cfg)
         cls.prepare_data()
 
@@ -65,23 +69,40 @@ class kb_maxbinTest(unittest.TestCase):
 
     @classmethod
     def prepare_data(cls):
-        pass
-        # cls.contig_filename = 'small.forward.fq'
-        # cls.contig_path = os.path.join(cls.scratch, cls.contig_filename)
-        # shutil.copy(os.path.join("data", cls.contig_filename),
-        #             cls.contig_path)
+        # building SingleEndLibrary
+        se_reads_filename = 'Sample1.fastq'
+        se_reads_path = os.path.join(cls.scratch, se_reads_filename)
+        shutil.copy(os.path.join("data", "reads_file", se_reads_filename), se_reads_path)
+        se_reads_params = {
+            'fwd_file': se_reads_path,
+            'sequencing_tech': 'Unknown',
+            'wsname': cls.ws_info[1],
+            'name': 'MySingleEndLibrary'
+        }
+        cls.se_reads_ref = cls.ru.upload_reads(se_reads_params)['obj_ref']
+
+        # building PairedEndLibrary
+        fwd_reads_filename = 'small.forward.fq'
+        fwd_reads_path = os.path.join(cls.scratch, fwd_reads_filename)
+        shutil.copy(os.path.join("data", "reads_file", fwd_reads_filename), fwd_reads_path)
+
+        rev_reads_filename = 'small.reverse.fq'
+        rev_reads_path = os.path.join(cls.scratch, rev_reads_filename)
+        shutil.copy(os.path.join("data", "reads_file", rev_reads_filename), rev_reads_path)
+        pe_reads_params = {
+            'fwd_file': fwd_reads_path,
+            'rev_file': rev_reads_path,
+            'sequencing_tech': 'Unknown',
+            'wsname': cls.ws_info[1],
+            'name': 'MyPairedEndLibrary'
+        }
+        cls.pe_reads_ref = cls.ru.upload_reads(pe_reads_params)['obj_ref']
 
     def getWsClient(self):
         return self.__class__.wsClient
 
     def getWsName(self):
-        if hasattr(self.__class__, 'wsName'):
-            return self.__class__.wsName
-        suffix = int(time.time() * 1000)
-        wsName = "test_kb_maxbin_" + str(suffix)
-        ret = self.getWsClient().create_workspace({'workspace': wsName})  # noqa
-        self.__class__.wsName = wsName
-        return wsName
+        return self.ws_info[1]
 
     def getImpl(self):
         return self.__class__.serviceImpl
@@ -94,7 +115,6 @@ class kb_maxbinTest(unittest.TestCase):
           'missing_contig_file': {'path': 'path'},
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
@@ -105,7 +125,6 @@ class kb_maxbinTest(unittest.TestCase):
           'contig_file': {'path': 'path'},
           'missing_out_header': 'out_header',
           'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
@@ -116,11 +135,20 @@ class kb_maxbinTest(unittest.TestCase):
           'contig_file': {'path': 'path'},
           'out_header': 'out_header',
           'missing_workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
                     ValueError, '"workspace_name" parameter is required, but missing'):
+            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
+
+        invalidate_input_params = {
+          'contig_file': {'path': 'path'},
+          'out_header': 'out_header',
+          'workspace_name': 'workspace_name',
+          'missing_reads_list': 'reads_list'
+        }
+        with self.assertRaisesRegexp(
+                    ValueError, '"reads_list" parameter is required, but missing'):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
         invalidate_input_params = {
@@ -161,7 +189,6 @@ class kb_maxbinTest(unittest.TestCase):
           'contig_file': {'missing_shock_id': 'shock_id'},
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
@@ -172,7 +199,6 @@ class kb_maxbinTest(unittest.TestCase):
           'contig_file': {'path': 'path', 'invalid_shock_id': 'shock_id'},
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
@@ -183,7 +209,6 @@ class kb_maxbinTest(unittest.TestCase):
           'contig_file': {'invalid_path': 'path', 'invalid_shock_id': 'shock_id'},
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
@@ -194,40 +219,10 @@ class kb_maxbinTest(unittest.TestCase):
           'contig_file': {'invalid_path': 'path', 'invalid_shock_id': 'shock_id'},
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
                     ValueError, 'Please provide one and only one path/shock_id key'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'path': 'path'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide at least one abund_list or reads_list'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'path': 'path'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'abund_list': ''
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide at least one abund_list or reads_list'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'path': 'path'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'reads_list': ''
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide at least one abund_list or reads_list'):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
     def test_MaxBinUtil_stage_file(self):
@@ -361,21 +356,46 @@ class kb_maxbinTest(unittest.TestCase):
         command = self.maxbin_runner._generate_command(input_params)
         self.assertEquals(command, expect_command)
 
-    def test_run_maxbin_file_path(self):
+    def test_MaxBinUtil_stage_reads_list_file(self):
+        # test SingleEndLibrary
+        reads_list = [self.se_reads_ref, self.se_reads_ref]
+
+        reads_list_file = self.maxbin_runner._stage_reads_list_file(reads_list)
+
+        with open(reads_list_file) as file:
+            result_file_list = file.readlines()
+
+        self.assertEquals(len(result_file_list), len(reads_list))
+        for item in result_file_list:
+            self.assertRegexpMatches(item, r'.*\.single\.fastq.*')
+
+        print result_file_list
+
+        # test PairedEndLibrary
+        reads_list = [self.pe_reads_ref, self.pe_reads_ref]
+
+        reads_list_file = self.maxbin_runner._stage_reads_list_file(reads_list)
+
+        with open(reads_list_file) as file:
+            result_file_list = file.readlines()
+
+        self.assertEquals(len(result_file_list), len(reads_list))
+        for item in result_file_list:
+            self.assertRegexpMatches(item, r'.*\.inter\.fastq.*')
+
+        print result_file_list
+
+    def test_run_maxbin_single_reads(self):
 
         contig_filename = '20x.scaffold.gz'
         contig_path = os.path.join(self.scratch, contig_filename)
         shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
-
-        abund_filename = '20x.abund'
-        abund_path = os.path.join(self.scratch, abund_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
 
         input_params = {
             'contig_file': {'path': contig_path},
             'out_header': 'out_header',
             'workspace_name': self.getWsName(),
-            'abund_list': {'path': [abund_path]},
+            'reads_list': [self.pe_reads_ref],
             'thread': 4,
             'prob_threshold': 0.5,
             'markerset': 40,
@@ -399,27 +419,22 @@ class kb_maxbinTest(unittest.TestCase):
             'out_header.marker_of_each_bin.tar.gz',
             'out_header.noclass',
             'out_header.summary',
-            'out_header.tooshort']
+            'out_header.tooshort',
+            'out_header.abund1']
 
         self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
 
-    def test_run_maxbin_shock_id(self):
+    def test_run_maxbin_multi_reads(self):
 
         contig_filename = '20x.scaffold.gz'
         contig_path = os.path.join(self.scratch, contig_filename)
         shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
-        contig_shock_id = self.dfu.file_to_shock({'file_path': contig_path})['shock_id']
-
-        abund_filename = '20x.abund'
-        abund_path = os.path.join(self.scratch, abund_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
-        abund_shock_id = self.dfu.file_to_shock({'file_path': abund_path})['shock_id']
 
         input_params = {
-            'contig_file': {'shock_id': contig_shock_id},
+            'contig_file': {'path': contig_path},
             'out_header': 'out_header',
             'workspace_name': self.getWsName(),
-            'abund_list': {'shock_id': [abund_shock_id]},
+            'reads_list': [self.pe_reads_ref, self.pe_reads_ref, self.se_reads_ref],
             'thread': 4,
             'prob_threshold': 0.5,
             'markerset': 40,
@@ -438,57 +453,15 @@ class kb_maxbinTest(unittest.TestCase):
             'out_header.001.fasta',
             'out_header.002.fasta',
             'out_header.003.fasta',
+            'out_header.abundance',
             'out_header.log',
             'out_header.marker',
             'out_header.marker_of_each_bin.tar.gz',
             'out_header.noclass',
             'out_header.summary',
-            'out_header.tooshort']
-
-        self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
-
-    def test_run_maxbin_multi_abund(self):
-
-        contig_filename = '20x.scaffold.gz'
-        contig_path = os.path.join(self.scratch, contig_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
-        contig_shock_id = self.dfu.file_to_shock({'file_path': contig_path})['shock_id']
-
-        abund_filename = '20x.abund'
-        abund_path = os.path.join(self.scratch, abund_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
-        abund_shock_id = self.dfu.file_to_shock({'file_path': abund_path})['shock_id']
-
-        input_params = {
-            'contig_file': {'shock_id': contig_shock_id},
-            'out_header': 'maxbin_output',
-            'workspace_name': self.getWsName(),
-            'abund_list': {'shock_id': [abund_shock_id, abund_shock_id],
-                           'path': [abund_path, abund_path]},
-            'thread': 4,
-            'prob_threshold': 0.5,
-            'markerset': 40,
-            'min_contig_length': 2000,
-            'plotmarker': 1
-        }
-
-        result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
-
-        self.assertTrue('result_directory' in result)
-        self.assertTrue('obj_ref' in result)
-        self.assertTrue('report_name' in result)
-        self.assertTrue('report_ref' in result)
-
-        expect_files = [
-            'maxbin_output.001.fasta',
-            'maxbin_output.002.fasta',
-            'maxbin_output.003.fasta',
-            'maxbin_output.abundance',
-            'maxbin_output.log',
-            'maxbin_output.marker',
-            'maxbin_output.marker_of_each_bin.tar.gz',
-            'maxbin_output.noclass',
-            'maxbin_output.summary',
-            'maxbin_output.tooshort']
+            'out_header.tooshort',
+            'out_header.abund1',
+            'out_header.abund2',
+            'out_header.abund3']
 
         self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)

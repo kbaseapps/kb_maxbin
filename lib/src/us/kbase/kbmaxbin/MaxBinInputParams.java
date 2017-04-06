@@ -17,11 +17,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <pre>
  * required params:
  * contig_file: contig file path/shock_id in File structure
+ * assembly_ref: Genome assembly object reference
  * out_header: output file header
  * workspace_name: the name of the workspace it gets saved to.
- * semi-required: at least one of the following parameters is needed
- * abund_list: contig abundance file(s)/shock_id(s)
- * reads_list: reads file(s)/shock_id(s) in fasta or fastq format
+ * reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
  * optional params:
  * thread: number of threads; default 1
  * reassembly: specify this option if you want to reassemble the bins.
@@ -38,9 +37,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "contig_file",
+    "assembly_ref",
     "out_header",
     "workspace_name",
-    "abund_list",
     "reads_list",
     "thread",
     "reassembly",
@@ -59,15 +58,15 @@ public class MaxBinInputParams {
      * 
      */
     @JsonProperty("contig_file")
-    private us.kbase.kbmaxbin.File contigFile;
+    private File contigFile;
+    @JsonProperty("assembly_ref")
+    private java.lang.String assemblyRef;
     @JsonProperty("out_header")
-    private String outHeader;
+    private java.lang.String outHeader;
     @JsonProperty("workspace_name")
-    private String workspaceName;
-    @JsonProperty("abund_list")
-    private List<us.kbase.kbmaxbin.File> abundList;
+    private java.lang.String workspaceName;
     @JsonProperty("reads_list")
-    private List<us.kbase.kbmaxbin.File> readsList;
+    private List<String> readsList;
     @JsonProperty("thread")
     private Long thread;
     @JsonProperty("reassembly")
@@ -80,7 +79,7 @@ public class MaxBinInputParams {
     private Long minContigLength;
     @JsonProperty("plotmarker")
     private Long plotmarker;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     /**
      * <p>Original spec-file type: File</p>
@@ -90,7 +89,7 @@ public class MaxBinInputParams {
      * 
      */
     @JsonProperty("contig_file")
-    public us.kbase.kbmaxbin.File getContigFile() {
+    public File getContigFile() {
         return contigFile;
     }
 
@@ -102,71 +101,71 @@ public class MaxBinInputParams {
      * 
      */
     @JsonProperty("contig_file")
-    public void setContigFile(us.kbase.kbmaxbin.File contigFile) {
+    public void setContigFile(File contigFile) {
         this.contigFile = contigFile;
     }
 
-    public MaxBinInputParams withContigFile(us.kbase.kbmaxbin.File contigFile) {
+    public MaxBinInputParams withContigFile(File contigFile) {
         this.contigFile = contigFile;
         return this;
     }
 
+    @JsonProperty("assembly_ref")
+    public java.lang.String getAssemblyRef() {
+        return assemblyRef;
+    }
+
+    @JsonProperty("assembly_ref")
+    public void setAssemblyRef(java.lang.String assemblyRef) {
+        this.assemblyRef = assemblyRef;
+    }
+
+    public MaxBinInputParams withAssemblyRef(java.lang.String assemblyRef) {
+        this.assemblyRef = assemblyRef;
+        return this;
+    }
+
     @JsonProperty("out_header")
-    public String getOutHeader() {
+    public java.lang.String getOutHeader() {
         return outHeader;
     }
 
     @JsonProperty("out_header")
-    public void setOutHeader(String outHeader) {
+    public void setOutHeader(java.lang.String outHeader) {
         this.outHeader = outHeader;
     }
 
-    public MaxBinInputParams withOutHeader(String outHeader) {
+    public MaxBinInputParams withOutHeader(java.lang.String outHeader) {
         this.outHeader = outHeader;
         return this;
     }
 
     @JsonProperty("workspace_name")
-    public String getWorkspaceName() {
+    public java.lang.String getWorkspaceName() {
         return workspaceName;
     }
 
     @JsonProperty("workspace_name")
-    public void setWorkspaceName(String workspaceName) {
+    public void setWorkspaceName(java.lang.String workspaceName) {
         this.workspaceName = workspaceName;
     }
 
-    public MaxBinInputParams withWorkspaceName(String workspaceName) {
+    public MaxBinInputParams withWorkspaceName(java.lang.String workspaceName) {
         this.workspaceName = workspaceName;
-        return this;
-    }
-
-    @JsonProperty("abund_list")
-    public List<us.kbase.kbmaxbin.File> getAbundList() {
-        return abundList;
-    }
-
-    @JsonProperty("abund_list")
-    public void setAbundList(List<us.kbase.kbmaxbin.File> abundList) {
-        this.abundList = abundList;
-    }
-
-    public MaxBinInputParams withAbundList(List<us.kbase.kbmaxbin.File> abundList) {
-        this.abundList = abundList;
         return this;
     }
 
     @JsonProperty("reads_list")
-    public List<us.kbase.kbmaxbin.File> getReadsList() {
+    public List<String> getReadsList() {
         return readsList;
     }
 
     @JsonProperty("reads_list")
-    public void setReadsList(List<us.kbase.kbmaxbin.File> readsList) {
+    public void setReadsList(List<String> readsList) {
         this.readsList = readsList;
     }
 
-    public MaxBinInputParams withReadsList(List<us.kbase.kbmaxbin.File> readsList) {
+    public MaxBinInputParams withReadsList(List<String> readsList) {
         this.readsList = readsList;
         return this;
     }
@@ -262,18 +261,18 @@ public class MaxBinInputParams {
     }
 
     @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
+    public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(String name, Object value) {
+    public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
     }
 
     @Override
-    public String toString() {
-        return ((((((((((((((((((((((((("MaxBinInputParams"+" [contigFile=")+ contigFile)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", abundList=")+ abundList)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
+    public java.lang.String toString() {
+        return ((((((((((((((((((((((((("MaxBinInputParams"+" [contigFile=")+ contigFile)+", assemblyRef=")+ assemblyRef)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

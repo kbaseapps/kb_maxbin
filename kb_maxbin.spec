@@ -9,6 +9,11 @@ module kb_maxbin {
     */
     typedef int boolean;
 
+    /* An X/Y/Z style reference
+    */
+    typedef string assembly_ref;
+    typedef string reads_ref;
+
     typedef string bin_id;
     typedef string contig_id;
     typedef string contig_obj_ref;
@@ -32,12 +37,10 @@ module kb_maxbin {
     /*  
         required params:
         contig_file: contig file path/shock_id in File structure
+        assembly_ref: Genome assembly object reference
         out_header: output file header
         workspace_name: the name of the workspace it gets saved to.
-
-        semi-required: at least one of the following parameters is needed
-        abund_list: contig abundance file(s)/shock_id(s)
-        reads_list: reads file(s)/shock_id(s) in fasta or fastq format
+        reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
 
         optional params:
         thread: number of threads; default 1
@@ -52,11 +55,10 @@ module kb_maxbin {
     */
     typedef structure {
         File contig_file;
+        assembly_ref assembly_ref;
         string out_header;
         string workspace_name;
-
-        list<File> abund_list;
-        list<File> reads_list;
+        list<reads_ref> reads_list;
 
         int thread;
         boolean reassembly;

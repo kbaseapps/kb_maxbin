@@ -11,6 +11,7 @@ import re
 
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 from KBaseReport.KBaseReportClient import KBaseReport
+from ReadsUtils.ReadsUtilsClient import ReadsUtils
 
 
 def log(message, prefix_newline=False):
@@ -30,7 +31,7 @@ class MaxBinUtil:
         log('Start validating run_maxbin params')
 
         # check for required parameters
-        for p in ['contig_file', 'out_header', 'workspace_name']:
+        for p in ['contig_file', 'out_header', 'workspace_name', 'reads_list']:
             if p not in params:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
 
@@ -43,9 +44,6 @@ class MaxBinUtil:
         valid_file_keys = {'path', 'shock_id'}
         if not(set(contig_file.keys()) < valid_file_keys):
             raise ValueError('Please provide one and only one path/shock_id key')
-
-        if not(params.get('abund_list') or params.get('reads_list')):
-            raise ValueError('Please provide at least one abund_list or reads_list')
 
     def _mkdir_p(self, path):
         """
@@ -61,6 +59,18 @@ class MaxBinUtil:
             else:
                 raise
 
+    def _fetch_summary(self, output):
+        """
+        _fetch_summary: fetch summary info from output
+        """
+        log('Starting fetch summary report')
+        start = '========== Job finished =========='
+        end = '========== Elapsed Time =========='
+        self.output_summary = ''
+
+        if len(output.split(start)) > 1:
+            self.output_summary = output.split(start)[1].split(end)[0]
+
     def _run_command(self, command):
         """
         _run_command: run command and print result
@@ -72,6 +82,7 @@ class MaxBinUtil:
         exitCode = pipe.returncode
 
         if (exitCode == 0):
+            self._fetch_summary(output)
             log('Executed commend:\n{}\n'.format(command) +
                 'Exit Code: {}\nOutput:\n{}'.format(exitCode, output))
         else:
@@ -110,6 +121,35 @@ class MaxBinUtil:
         file_path = self.dfu.unpack_file({'file_path': file_path})['file_path']
 
         return file_path
+
+    def _stage_reads_list_file(self, reads_list):
+        """
+        _stage_reads_list_file: download fastq file associated to reads to scratch area
+                          and write result_file_path to file
+        """
+
+        log('Processing reads object list: {}'.format(reads_list))
+
+        result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        self._mkdir_p(result_directory)
+        result_file = os.path.join(result_directory, 'result.txt')
+
+        result_file_path = []
+
+        for reads_ref in reads_list:
+            reads_shock_id = self.ru.export_reads({'input_ref': reads_ref})['shock_id']
+            file_path = self._stage_file({'shock_id': reads_shock_id})
+            result_files = os.listdir(os.path.dirname(file_path))
+            for file in result_files:
+                if file.endswith('fastq'):
+                    result_file_path.append(os.path.join(os.path.dirname(file_path), file))
+
+        log('Saving reads file path(s) to: {}'.format(result_file))
+        with open(result_file, 'w') as file_handler:
+            for item in result_file_path:
+                file_handler.write("{}\n".format(item))
+
+        return result_file
 
     def _stage_file_list(self, file_list):
         """
@@ -194,71 +234,75 @@ class MaxBinUtil:
         header = params.get('out_header')
 
         upload_message += '--------------------------\nSummary:\n\n'
-        with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
-            lines = summary_file.readlines()
-            for line in lines:
-                line_list = line.split('\t')
-                if len(line_list) == 5:
-                    upload_message += '{:{number}} {:10} {:15} {:15} {}'.format(
-                                                        line_list[0], line_list[1],
-                                                        line_list[2], line_list[3],
-                                                        line_list[4], number=len(header)+12)
-                elif len(line_list) == 4:
-                    upload_message += '{:{number}} {:15} {:15} {}'.format(
-                                                        line_list[0], line_list[1],
-                                                        line_list[2], line_list[3],
-                                                        number=len(header)+12)
-                else:
-                    upload_message = upload_message.replace(
-                                            '--------------------------\nSummary:\n\n', '')
 
-        upload_message += '\n--------------------------\nOutput files for this run:\n\n'
         if header + '.summary' in file_list:
-            upload_message += 'Summary file: {}.summary\n'.format(header)
-            file_list.remove(header + '.summary')
+            with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
+                lines = summary_file.readlines()
+                for line in lines:
+                    line_list = line.split('\t')
+                    if len(line_list) == 5:
+                        upload_message += '{:{number}} {:10} {:15} {:15} {}'.format(
+                                                            line_list[0], line_list[1],
+                                                            line_list[2], line_list[3],
+                                                            line_list[4], number=len(header)+12)
+                    elif len(line_list) == 4:
+                        upload_message += '{:{number}} {:15} {:15} {}'.format(
+                                                            line_list[0], line_list[1],
+                                                            line_list[2], line_list[3],
+                                                            number=len(header)+12)
+                    else:
+                        upload_message = upload_message.replace(
+                                                '--------------------------\nSummary:\n\n', '')
+        if self.output_summary:
+            upload_message += self.output_summary
+        else:
+            upload_message += '\n--------------------------\nOutput files for this run:\n\n'
+            if header + '.summary' in file_list:
+                upload_message += 'Summary file: {}.summary\n'.format(header)
+                file_list.remove(header + '.summary')
 
-        if header + '.abundance' in file_list:
-            upload_message += 'Genome abundance info file: {}.abundance\n'.format(header)
-            file_list.remove(header + '.abundance')
+            if header + '.abundance' in file_list:
+                upload_message += 'Genome abundance info file: {}.abundance\n'.format(header)
+                file_list.remove(header + '.abundance')
 
-        if header + '.marker' in file_list:
-            upload_message += 'Marker counts: {}.marker\n'.format(header)
-            file_list.remove(header + '.marker')
+            if header + '.marker' in file_list:
+                upload_message += 'Marker counts: {}.marker\n'.format(header)
+                file_list.remove(header + '.marker')
 
-        if header + '.marker_of_each_bin.tar.gz' in file_list:
-            upload_message += 'Marker genes for each bin: '
-            upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
-            file_list.remove(header + '.marker_of_each_bin.tar.gz')
+            if header + '.marker_of_each_bin.tar.gz' in file_list:
+                upload_message += 'Marker genes for each bin: '
+                upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
+                file_list.remove(header + '.marker_of_each_bin.tar.gz')
 
-        if header + '.001.fasta' in file_list:
-            upload_message += 'Bin files: '
-            bin_file = []
-            for file_name in file_list:
-                if re.match(header + '\.\d{3}\.fasta', file_name):
-                    bin_file.append(file_name)
+            if header + '.001.fasta' in file_list:
+                upload_message += 'Bin files: '
+                bin_file = []
+                for file_name in file_list:
+                    if re.match(header + '\.\d{3}\.fasta', file_name):
+                        bin_file.append(file_name)
 
-            bin_file.sort()
-            upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
-            file_list = [item for item in file_list if item not in bin_file]
+                bin_file.sort()
+                upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
+                file_list = [item for item in file_list if item not in bin_file]
 
-        if header + '.noclass' in file_list:
-            upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
-            file_list.remove(header + '.noclass')
+            if header + '.noclass' in file_list:
+                upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
+                file_list.remove(header + '.noclass')
 
-        if header + '.tooshort' in file_list:
-            upload_message += 'Short sequences: {}.tooshort\n'.format(header)
-            file_list.remove(header + '.tooshort')
+            if header + '.tooshort' in file_list:
+                upload_message += 'Short sequences: {}.tooshort\n'.format(header)
+                file_list.remove(header + '.tooshort')
 
-        if header + '.log' in file_list:
-            upload_message += 'Log file: {}.log\n'.format(header)
-            file_list.remove(header + '.log')
+            if header + '.log' in file_list:
+                upload_message += 'Log file: {}.log\n'.format(header)
+                file_list.remove(header + '.log')
 
-        if header + '.marker.pdf' in file_list:
-            upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
-            file_list.remove(header + '.marker.pdf')
+            if header + '.marker.pdf' in file_list:
+                upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
+                file_list.remove(header + '.marker.pdf')
 
-        if file_list:
-            upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
+            if file_list:
+                upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
 
         log('Report message:\n{}'.format(upload_message))
 
@@ -277,10 +321,10 @@ class MaxBinUtil:
 
     def __init__(self, config):
         self.callback_url = config['SDK_CALLBACK_URL']
-        self.token = config['KB_AUTH_TOKEN']
         self.scratch = config['scratch']
         self.shock_url = config['shock-url']
         self.dfu = DataFileUtil(self.callback_url)
+        self.ru = ReadsUtils(self.callback_url)
 
     def run_maxbin(self, params):
         """
@@ -288,12 +332,11 @@ class MaxBinUtil:
 
         required params:
             contig_file: contig file path/shock_id in File structure
+            assembly_ref: Genome assembly object reference
             out_header: output file header
             workspace_name: the name of the workspace it gets saved to.
-
-        semi-required: at least one of the following parameters is needed
-            abund_list: contig abundance file(s)/shock_id(s)
-            reads_list: reads file(s)/shock_id(s) in fasta or fastq format
+            reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary)
+                        upon which MaxBin will be run
 
         optional params:
             thread: number of threads; default 1
@@ -301,6 +344,8 @@ class MaxBinUtil:
                         note that at least one reads file needs to be designated.
             prob_threshold: minimum probability for EM algorithm; default 0.8
             markerset: choose between 107 marker genes by default or 40 marker genes
+            min_contig_length: minimum contig length; default 1000
+            plotmarker: specify this option if you want to plot the markers in each contig
 
         ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
         """
@@ -312,13 +357,8 @@ class MaxBinUtil:
         contig_file = self._stage_file(params.get('contig_file'))
         params['contig_file_path'] = contig_file
 
-        if params.get('abund_list'):
-            abund_list_file = self._stage_file_list(params.get('abund_list'))
-            params['abund_list_file'] = abund_list_file
-
-        if params.get('reads_list'):
-            reads_list_file = self._stage_file_list(params.get('reads_list'))
-            params['reads_list_file'] = reads_list_file
+        reads_list_file = self._stage_reads_list_file(params.get('reads_list'))
+        params['reads_list_file'] = reads_list_file
 
         command = self._generate_command(params)
 
@@ -342,7 +382,7 @@ class MaxBinUtil:
             shutil.copy(file, result_directory)
 
         log('Saved result files to: {}'.format(result_directory))
-        log('Gernated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
+        log('Generated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
 
         reportVal = self._generate_report(result_directory, params)
 
