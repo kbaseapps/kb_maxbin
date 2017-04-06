@@ -5,6 +5,8 @@ name     : MaxBin2 - Contig Binning
 subtitle : Bin assembled metagenomic contigs by taxonomy
 tooltip  : Bin assembled metagenomic contigs by taxonomy
 
+icon: maxbin2-green.png
+
 screenshots: []
 
 #
