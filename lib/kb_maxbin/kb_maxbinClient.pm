@@ -122,7 +122,6 @@ sub new
 $params is a kb_maxbin.MaxBinInputParams
 $returnVal is a kb_maxbin.MaxBinResult
 MaxBinInputParams is a reference to a hash where the following keys are defined:
-	contig_file has a value which is a kb_maxbin.File
 	assembly_ref has a value which is a kb_maxbin.assembly_ref
 	out_header has a value which is a string
 	workspace_name has a value which is a string
@@ -133,9 +132,6 @@ MaxBinInputParams is a reference to a hash where the following keys are defined:
 	markerset has a value which is an int
 	min_contig_length has a value which is an int
 	plotmarker has a value which is a kb_maxbin.boolean
-File is a reference to a hash where the following keys are defined:
-	path has a value which is a string
-	shock_id has a value which is a string
 assembly_ref is a string
 reads_ref is a string
 boolean is an int
@@ -154,7 +150,6 @@ MaxBinResult is a reference to a hash where the following keys are defined:
 $params is a kb_maxbin.MaxBinInputParams
 $returnVal is a kb_maxbin.MaxBinResult
 MaxBinInputParams is a reference to a hash where the following keys are defined:
-	contig_file has a value which is a kb_maxbin.File
 	assembly_ref has a value which is a kb_maxbin.assembly_ref
 	out_header has a value which is a string
 	workspace_name has a value which is a string
@@ -165,9 +160,6 @@ MaxBinInputParams is a reference to a hash where the following keys are defined:
 	markerset has a value which is an int
 	min_contig_length has a value which is an int
 	plotmarker has a value which is a kb_maxbin.boolean
-File is a reference to a hash where the following keys are defined:
-	path has a value which is a string
-	shock_id has a value which is a string
 assembly_ref is a string
 reads_ref is a string
 boolean is an int
@@ -524,43 +516,6 @@ contig_id2contig_ref has a value which is a reference to a hash where the key is
 
 
 
-=head2 File
-
-=over 4
-
-
-
-=item Description
-
-File structure for input/output file
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a reference to a hash where the following keys are defined:
-path has a value which is a string
-shock_id has a value which is a string
-
-</pre>
-
-=end html
-
-=begin text
-
-a reference to a hash where the following keys are defined:
-path has a value which is a string
-shock_id has a value which is a string
-
-
-=end text
-
-=back
-
-
-
 =head2 MaxBinInputParams
 
 =over 4
@@ -570,7 +525,6 @@ shock_id has a value which is a string
 =item Description
 
 required params:
-contig_file: contig file path/shock_id in File structure
 assembly_ref: Genome assembly object reference
 out_header: output file header
 workspace_name: the name of the workspace it gets saved to.
@@ -594,7 +548,6 @@ ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
 
 <pre>
 a reference to a hash where the following keys are defined:
-contig_file has a value which is a kb_maxbin.File
 assembly_ref has a value which is a kb_maxbin.assembly_ref
 out_header has a value which is a string
 workspace_name has a value which is a string
@@ -613,7 +566,6 @@ plotmarker has a value which is a kb_maxbin.boolean
 =begin text
 
 a reference to a hash where the following keys are defined:
-contig_file has a value which is a kb_maxbin.File
 assembly_ref has a value which is a kb_maxbin.assembly_ref
 out_header has a value which is a string
 workspace_name has a value which is a string

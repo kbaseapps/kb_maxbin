@@ -20,6 +20,7 @@ from kb_maxbin.authclient import KBaseAuth as _KBaseAuth
 from kb_maxbin.Utils.MaxBinUtil import MaxBinUtil
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
+from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 
 
 class kb_maxbinTest(unittest.TestCase):
@@ -58,6 +59,7 @@ class kb_maxbinTest(unittest.TestCase):
         cls.ws_info = cls.wsClient.create_workspace({'workspace': wsName})
         cls.dfu = DataFileUtil(os.environ['SDK_CALLBACK_URL'], token=cls.token)
         cls.ru = ReadsUtils(os.environ['SDK_CALLBACK_URL'], token=cls.token)
+        cls.au = AssemblyUtil(os.environ['SDK_CALLBACK_URL'], token=cls.token)
         cls.maxbin_runner = MaxBinUtil(cls.cfg)
         cls.prepare_data()
 
@@ -98,6 +100,18 @@ class kb_maxbinTest(unittest.TestCase):
         }
         cls.pe_reads_ref = cls.ru.upload_reads(pe_reads_params)['obj_ref']
 
+        # building Assembly
+        assembly_filename = '20x.fna'
+        cls.assembly_fasta_file_path = os.path.join(cls.scratch, assembly_filename)
+        shutil.copy(os.path.join("data", assembly_filename), cls.assembly_fasta_file_path)
+
+        assembly_params = {
+            'file': {'path': cls.assembly_fasta_file_path},
+            'workspace_name': cls.ws_info[1],
+            'assembly_name': 'MyAssembly'
+        }
+        cls.assembly_ref = cls.au.save_assembly_from_fasta(assembly_params)
+
     def getWsClient(self):
         return self.__class__.wsClient
 
@@ -112,17 +126,17 @@ class kb_maxbinTest(unittest.TestCase):
 
     def test_bad_run_maxbin_params(self):
         invalidate_input_params = {
-          'missing_contig_file': {'path': 'path'},
+          'missing_assembly_ref': 'assembly_ref',
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
-                    ValueError, '"contig_file" parameter is required, but missing'):
+                    ValueError, '"assembly_ref" parameter is required, but missing'):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
         invalidate_input_params = {
-          'contig_file': {'path': 'path'},
+          'assembly_ref': 'assembly_ref',
           'missing_out_header': 'out_header',
           'workspace_name': 'workspace_name',
           'reads_list': 'reads_list'
@@ -132,7 +146,7 @@ class kb_maxbinTest(unittest.TestCase):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
         invalidate_input_params = {
-          'contig_file': {'path': 'path'},
+          'assembly_ref': 'assembly_ref',
           'out_header': 'out_header',
           'missing_workspace_name': 'workspace_name',
           'reads_list': 'reads_list'
@@ -142,87 +156,13 @@ class kb_maxbinTest(unittest.TestCase):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
         invalidate_input_params = {
-          'contig_file': {'path': 'path'},
+          'assembly_ref': 'assembly_ref',
           'out_header': 'out_header',
           'workspace_name': 'workspace_name',
           'missing_reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
                     ValueError, '"reads_list" parameter is required, but missing'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': 'not a dict',
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
-          'reads_list': 'reads_list'
-        }
-        error_msg = 'contig_file is not type dict as required '
-        error_msg += '\[dict format: \{path/shock_id: string\}\]'
-        with self.assertRaisesRegexp(ValueError, error_msg):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'path': 'path', 'shock_id': 'shock_id'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
-          'reads_list': 'reads_list'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide one and only one path/shock_id key'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'missing_path': 'path'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'abund_list': 'abund_list',
-          'reads_list': 'reads_list'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide one and only one path/shock_id key'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'missing_shock_id': 'shock_id'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'reads_list': 'reads_list'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide one and only one path/shock_id key'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'path': 'path', 'invalid_shock_id': 'shock_id'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'reads_list': 'reads_list'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide one and only one path/shock_id key'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'invalid_path': 'path', 'invalid_shock_id': 'shock_id'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'reads_list': 'reads_list'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide one and only one path/shock_id key'):
-            self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
-
-        invalidate_input_params = {
-          'contig_file': {'invalid_path': 'path', 'invalid_shock_id': 'shock_id'},
-          'out_header': 'out_header',
-          'workspace_name': 'workspace_name',
-          'reads_list': 'reads_list'
-        }
-        with self.assertRaisesRegexp(
-                    ValueError, 'Please provide one and only one path/shock_id key'):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
     def test_MaxBinUtil_stage_file(self):
@@ -369,8 +309,6 @@ class kb_maxbinTest(unittest.TestCase):
         for item in result_file_list:
             self.assertRegexpMatches(item, r'.*\.single\.fastq.*')
 
-        print result_file_list
-
         # test PairedEndLibrary
         reads_list = [self.pe_reads_ref, self.pe_reads_ref]
 
@@ -383,22 +321,27 @@ class kb_maxbinTest(unittest.TestCase):
         for item in result_file_list:
             self.assertRegexpMatches(item, r'.*\.inter\.fastq.*')
 
-        print result_file_list
+    def test_MaxBinUtil_get_contig_file(self):
+        contig_file = self.maxbin_runner._get_contig_file(self.assembly_ref)
+
+        with open(contig_file, 'r') as file:
+            contig_file_content = file.readlines()
+
+        with open(self.assembly_fasta_file_path, 'r') as file:
+            expect_contig_file_content = file.readlines()
+
+        self.assertItemsEqual(contig_file_content, expect_contig_file_content)
 
     def test_run_maxbin_single_reads(self):
 
-        contig_filename = '20x.scaffold.gz'
-        contig_path = os.path.join(self.scratch, contig_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
-
         input_params = {
-            'contig_file': {'path': contig_path},
+            'assembly_ref': self.assembly_ref,
             'out_header': 'out_header',
             'workspace_name': self.getWsName(),
             'reads_list': [self.pe_reads_ref],
-            'thread': 4,
+            'thread': 1,
             'prob_threshold': 0.5,
-            'markerset': 40,
+            'markerset': 170,
             'min_contig_length': 2000,
             'plotmarker': 1
         }
@@ -410,35 +353,17 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
-        # expect_files = [
-        #     'out_header.001.fasta',
-        #     'out_header.002.fasta',
-        #     'out_header.003.fasta',
-        #     'out_header.log',
-        #     'out_header.marker',
-        #     'out_header.marker_of_each_bin.tar.gz',
-        #     'out_header.noclass',
-        #     'out_header.summary',
-        #     'out_header.tooshort',
-        #     'out_header.abund1']
-
-        # self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
-
     def test_run_maxbin_multi_reads(self):
 
-        contig_filename = '20x.scaffold.gz'
-        contig_path = os.path.join(self.scratch, contig_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", contig_filename), contig_path)
-
         input_params = {
-            'contig_file': {'path': contig_path},
+            'assembly_ref': self.assembly_ref,
             'out_header': 'out_header',
             'workspace_name': self.getWsName(),
             'reads_list': [self.pe_reads_ref, self.pe_reads_ref, self.se_reads_ref],
             'thread': 4,
-            'prob_threshold': 0.5,
+            'prob_threshold': 0.7,
             'markerset': 40,
-            'min_contig_length': 2000,
+            'min_contig_length': 1500,
             'plotmarker': 1
         }
 
@@ -465,3 +390,5 @@ class kb_maxbinTest(unittest.TestCase):
             'out_header.abund3']
 
         self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
+
+

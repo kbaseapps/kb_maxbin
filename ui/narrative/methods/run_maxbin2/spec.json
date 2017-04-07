@@ -12,14 +12,14 @@
     },
     "parameters": [ 
         {
-            "id": "contig_file",
+            "id": "assembly_ref",
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
             "default_values": [ "" ],
-            "field_type": "file",
+            "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ ]
+                "valid_ws_types" : ["KBaseGenomes.ContigSet", "KBaseGenomeAnnotations.Assembly"]
             }
         },
         {  
@@ -110,8 +110,8 @@
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "contig_file",
-                    "target_property": "contig_file/shock_id"
+                    "input_parameter": "assembly_ref",
+                    "target_property": "assembly_ref"
                 },
                 {
                     "input_parameter": "out_header",

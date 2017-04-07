@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <p>Original spec-file type: MaxBinInputParams</p>
  * <pre>
  * required params:
- * contig_file: contig file path/shock_id in File structure
  * assembly_ref: Genome assembly object reference
  * out_header: output file header
  * workspace_name: the name of the workspace it gets saved to.
@@ -36,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
-    "contig_file",
     "assembly_ref",
     "out_header",
     "workspace_name",
@@ -50,15 +48,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class MaxBinInputParams {
 
-    /**
-     * <p>Original spec-file type: File</p>
-     * <pre>
-     * File structure for input/output file
-     * </pre>
-     * 
-     */
-    @JsonProperty("contig_file")
-    private File contigFile;
     @JsonProperty("assembly_ref")
     private java.lang.String assemblyRef;
     @JsonProperty("out_header")
@@ -80,35 +69,6 @@ public class MaxBinInputParams {
     @JsonProperty("plotmarker")
     private Long plotmarker;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
-
-    /**
-     * <p>Original spec-file type: File</p>
-     * <pre>
-     * File structure for input/output file
-     * </pre>
-     * 
-     */
-    @JsonProperty("contig_file")
-    public File getContigFile() {
-        return contigFile;
-    }
-
-    /**
-     * <p>Original spec-file type: File</p>
-     * <pre>
-     * File structure for input/output file
-     * </pre>
-     * 
-     */
-    @JsonProperty("contig_file")
-    public void setContigFile(File contigFile) {
-        this.contigFile = contigFile;
-    }
-
-    public MaxBinInputParams withContigFile(File contigFile) {
-        this.contigFile = contigFile;
-        return this;
-    }
 
     @JsonProperty("assembly_ref")
     public java.lang.String getAssemblyRef() {
@@ -272,7 +232,7 @@ public class MaxBinInputParams {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((((((((("MaxBinInputParams"+" [contigFile=")+ contigFile)+", assemblyRef=")+ assemblyRef)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((("MaxBinInputParams"+" [assemblyRef=")+ assemblyRef)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

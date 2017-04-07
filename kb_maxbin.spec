@@ -19,24 +19,13 @@ module kb_maxbin {
     typedef string contig_obj_ref;
 
     typedef structure {
-	list<bin_id> bin_ids;
+        list<bin_id> bin_ids;
         mapping<bin_id, list<contig_id>> bin2contig_id;
         mapping<contig_id, contig_obj_ref> contig_id2contig_ref;
     } BinnedAssembly;
 
-
-    /*
-        File structure for input/output file
-    */
-
-    typedef structure {
-        string path;
-        string shock_id;
-    } File;
-
     /*  
         required params:
-        contig_file: contig file path/shock_id in File structure
         assembly_ref: Genome assembly object reference
         out_header: output file header
         workspace_name: the name of the workspace it gets saved to.
@@ -54,7 +43,6 @@ module kb_maxbin {
         ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
     */
     typedef structure {
-        File contig_file;
         assembly_ref assembly_ref;
         string out_header;
         string workspace_name;
