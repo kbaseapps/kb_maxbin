@@ -5,7 +5,7 @@
     ],
     "contact" : "help@kbase.us",
     "visible" : true,
-    "categories": ["active"],
+    "categories": ["active","assembly","communities"],
     "widgets": {
         "input": "kbaseNarrativeMethodInput",
         "output" : "no-display"
