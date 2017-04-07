@@ -12,6 +12,7 @@ import re
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 from KBaseReport.KBaseReportClient import KBaseReport
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
+from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
 
 
 def log(message, prefix_newline=False):
@@ -31,19 +32,9 @@ class MaxBinUtil:
         log('Start validating run_maxbin params')
 
         # check for required parameters
-        for p in ['contig_file', 'out_header', 'workspace_name', 'reads_list']:
+        for p in ['assembly_ref', 'out_header', 'workspace_name', 'reads_list']:
             if p not in params:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
-
-        contig_file = params.get('contig_file')
-        if not isinstance(contig_file, dict):
-            error_msg = 'contig_file is not type dict as required '
-            error_msg += '[dict format: {path/shock_id: string}]'
-            raise ValueError(error_msg)
-
-        valid_file_keys = {'path', 'shock_id'}
-        if not(set(contig_file.keys()) < valid_file_keys):
-            raise ValueError('Please provide one and only one path/shock_id key')
 
     def _mkdir_p(self, path):
         """
@@ -181,6 +172,18 @@ class MaxBinUtil:
                 file_handler.write("{}\n".format(item))
 
         return result_file
+
+    def _get_contig_file(self, assembly_ref):
+        """
+        _get_contig_file: get contif file from GenomeAssembly object
+        """
+
+        contig_file = self.au.get_assembly_as_fasta({'ref': assembly_ref}).get('path')
+
+        sys.stdout.flush()
+        contig_file = self.dfu.unpack_file({'file_path': contig_file})['file_path']
+
+        return contig_file
 
     def _generate_command(self, params):
         """
@@ -325,14 +328,14 @@ class MaxBinUtil:
         self.shock_url = config['shock-url']
         self.dfu = DataFileUtil(self.callback_url)
         self.ru = ReadsUtils(self.callback_url)
+        self.au = AssemblyUtil(self.callback_url)
 
     def run_maxbin(self, params):
         """
         run_maxbin: run_MaxBin.pl app
 
         required params:
-            contig_file: contig file path/shock_id in File structure
-            assembly_ref: Genome assembly object reference
+            assembly_ref: Metagenome assembly object reference
             out_header: output file header
             workspace_name: the name of the workspace it gets saved to.
             reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary)
@@ -354,7 +357,8 @@ class MaxBinUtil:
 
         self._validate_run_maxbin_params(params)
 
-        contig_file = self._stage_file(params.get('contig_file'))
+        # contig_file = self._stage_file(params.get('contig_file'))
+        contig_file = self._get_contig_file(params.get('assembly_ref'))
         params['contig_file_path'] = contig_file
 
         reads_list_file = self._stage_reads_list_file(params.get('reads_list'))

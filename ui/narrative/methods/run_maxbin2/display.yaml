@@ -28,10 +28,10 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    contig_file :
-        ui-name : Contig File
-        short-hint : Contig file
-        long-hint  : Contig file
+    assembly_ref :
+        ui-name : Assembly Object
+        short-hint : Metagenome assembly object
+        long-hint  : Metagenome assembly object
 
     out_header :
         ui-name : Output File Header
@@ -39,7 +39,7 @@ parameters :
         long-hint  : Output file header
 
     reads_list :
-        ui-name : Reads Library Object
+        ui-name : Read Library Object
         short-hint : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
         long-hint  : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
 
@@ -49,7 +49,7 @@ parameters :
         long-hint  : Minimum probability for EM algorithm (default 0.9). Sequences that do not meet the threshold are discarded as 'unclassified'.
 
     markerset :
-        ui-name : Markersets
+        ui-name : Marker Set
         short-hint : Choose between 107 marker genes by default or 40 marker genes
         long-hint  : By default MaxBin will look for 107 marker genes present in >95% of bacteria. Alternatively you can also choose 40 marker gene sets that are universal among bacteria and archaea.
 
@@ -59,7 +59,7 @@ parameters :
         long-hint  : minimum contig length (default 1000)
 
     plotmarker :
-        ui-name : Plotmarker
+        ui-name : Plot Marker
         short-hint : Specify this option if you want to plot the markers in each contig
         long-hint  : Specify this option if you want to plot the markers in each contig
 
