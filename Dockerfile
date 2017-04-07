@@ -21,30 +21,20 @@ RUN pip install cffi --upgrade \
     && pip install requests --upgrade \
     && pip install 'requests[security]' --upgrade
 
-
-###### installation of MaxBin-2.2 from Upendra Kumar Devisetty <upendra@cyverse.org>
-###### https://github.com/upendrak/MaxBin-2.2/blob/master/Dockerfile
-#FROM ubuntu:14.04.3
-#LABEL Description="This Dockerfile is used for building Maxbin-2.2 Docker image" 
-## To get rid of all the messages
-#RUN DEBIAN_FRONTEND=noninteractive
-## To update the image
-#RUN apt-get update
-
 # To install all the dependencies
 RUN apt-get install -y build-essential wget make curl unzip python
 
 # To download the Maxbin software and untar it
 RUN cd /kb/dev_container/modules && \
     mkdir MaxBin && cd MaxBin && \
-    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.tar.gz/download &&\
+    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.1.tar.gz/download &&\
     tar xvf download && \
-    cd MaxBin-2.2/src && \
+    cd MaxBin-2.2.1/src && \
     make && \
     cd .. && \
     ./autobuild_auxiliary && \
     cd .. && \
-    cp -R MaxBin-2.2 /kb/deployment/bin/MaxBin
+    cp -R MaxBin-2.2.1 /kb/deployment/bin/MaxBin
 
 # -----------------------------------------
 
