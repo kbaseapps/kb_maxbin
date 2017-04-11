@@ -331,7 +331,7 @@ class MaxBinUtil:
             'binned_contig_name': params.get('binned_contig_name'),
             'workspace_name': params.get('workspace_name')
         }
-        binned_contig_obj_ref = self.mgu.binned_contig_obj_ref(generate_binned_contig_param)
+        binned_contig_obj_ref = self.mgu.file_to_binned_contigs(generate_binned_contig_param)
 
         reportVal = self._generate_report(result_directory, params)
 
