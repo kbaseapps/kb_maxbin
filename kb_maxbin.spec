@@ -11,23 +11,12 @@ module kb_maxbin {
 
     /* An X/Y/Z style reference
     */
-    typedef string assembly_ref;
-    typedef string reads_ref;
-
-    typedef string bin_id;
-    typedef string contig_id;
-    typedef string contig_obj_ref;
-
-    typedef structure {
-        list<bin_id> bin_ids;
-        mapping<bin_id, list<contig_id>> bin2contig_id;
-        mapping<contig_id, contig_obj_ref> contig_id2contig_ref;
-    } BinnedAssembly;
+    typedef string obj_ref;
 
     /*  
         required params:
         assembly_ref: Genome assembly object reference
-        out_header: output file header
+        binned_contig_name: BinnedContig object name and output file header
         workspace_name: the name of the workspace it gets saved to.
         reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
 
@@ -43,10 +32,10 @@ module kb_maxbin {
         ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
     */
     typedef structure {
-        assembly_ref assembly_ref;
-        string out_header;
+        obj_ref assembly_ref;
+        string binned_contig_name;
         string workspace_name;
-        list<reads_ref> reads_list;
+        list<obj_ref> reads_list;
 
         int thread;
         boolean reassembly;
@@ -63,7 +52,7 @@ module kb_maxbin {
     */
     typedef structure{
         string result_directory;
-        string obj_ref;
+        obj_ref binned_contig_obj_ref;
         string report_name;
         string report_ref;
     }MaxBinResult;

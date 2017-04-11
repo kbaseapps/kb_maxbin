@@ -128,7 +128,7 @@ class kb_maxbinTest(unittest.TestCase):
     def test_bad_run_maxbin_params(self):
         invalidate_input_params = {
           'missing_assembly_ref': 'assembly_ref',
-          'out_header': 'out_header',
+          'binned_contig_name': 'binned_contig_name',
           'workspace_name': 'workspace_name',
           'reads_list': 'reads_list'
         }
@@ -138,17 +138,17 @@ class kb_maxbinTest(unittest.TestCase):
 
         invalidate_input_params = {
           'assembly_ref': 'assembly_ref',
-          'missing_out_header': 'out_header',
+          'missing_binned_contig_name': 'binned_contig_name',
           'workspace_name': 'workspace_name',
           'reads_list': 'reads_list'
         }
         with self.assertRaisesRegexp(
-                    ValueError, '"out_header" parameter is required, but missing'):
+                    ValueError, '"binned_contig_name" parameter is required, but missing'):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
         invalidate_input_params = {
           'assembly_ref': 'assembly_ref',
-          'out_header': 'out_header',
+          'binned_contig_name': 'binned_contig_name',
           'missing_workspace_name': 'workspace_name',
           'reads_list': 'reads_list'
         }
@@ -158,7 +158,7 @@ class kb_maxbinTest(unittest.TestCase):
 
         invalidate_input_params = {
           'assembly_ref': 'assembly_ref',
-          'out_header': 'out_header',
+          'binned_contig_name': 'binned_contig_name',
           'workspace_name': 'workspace_name',
           'missing_reads_list': 'reads_list'
         }
@@ -186,59 +186,6 @@ class kb_maxbinTest(unittest.TestCase):
         contig_file_path = self.maxbin_runner._stage_file(contig_file)
 
         self.assertEquals(contig_filename.rpartition('.')[0], os.path.basename(contig_file_path))
-
-    def test_MaxBinUtil_stage_file_list(self):
-
-        abund_filename = '20x.abund'
-        abund_path = os.path.join(self.scratch, abund_filename)
-        shutil.copy(os.path.join("data", "jbei_set1", abund_filename), abund_path)
-
-        # test absolute file path
-        abund_file_list = {
-            'path': [abund_path, abund_path]
-        }
-
-        abund_list_file = self.maxbin_runner._stage_file_list(abund_file_list)
-
-        with open(abund_list_file) as file:
-            result_file_list = file.readlines()
-
-        self.assertEquals(len(result_file_list), len(abund_file_list.get('path')))
-        for item in result_file_list:
-            file_path = item.partition('\n')[0]
-            self.assertEquals(abund_filename, os.path.basename(file_path))
-
-        # test shock id
-        abund_shock_id = self.dfu.file_to_shock({'file_path': abund_path})['shock_id']
-        abund_file_list = {
-            'shock_id': [abund_shock_id, abund_shock_id]
-        }
-
-        abund_list_file = self.maxbin_runner._stage_file_list(abund_file_list)
-
-        with open(abund_list_file) as file:
-            result_file_list = file.readlines()
-
-        self.assertEquals(len(result_file_list), len(abund_file_list.get('shock_id')))
-        for item in result_file_list:
-            file_path = item.partition('\n')[0]
-            self.assertEquals(abund_filename, os.path.basename(file_path))
-
-        # test mix absolute file path and shock id
-        abund_file_list = {
-            'shock_id': [abund_shock_id],
-            'path': [abund_path]
-        }
-
-        abund_list_file = self.maxbin_runner._stage_file_list(abund_file_list)
-
-        with open(abund_list_file) as file:
-            result_file_list = file.readlines()
-
-        self.assertEquals(len(result_file_list), len(abund_file_list.keys()))
-        for item in result_file_list:
-            file_path = item.partition('\n')[0]
-            self.assertEquals(abund_filename, os.path.basename(file_path))
 
     def test_MaxBinUtil_generate_command(self):
         input_params = {
@@ -369,7 +316,7 @@ class kb_maxbinTest(unittest.TestCase):
 
         input_params = {
             'assembly_ref': self.assembly_ref,
-            'out_header': 'out_header',
+            'binned_contig_name': 'out_header',
             'workspace_name': self.getWsName(),
             'reads_list': [self.pe_reads_ref],
             'thread': 1,
@@ -382,7 +329,7 @@ class kb_maxbinTest(unittest.TestCase):
         result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
 
         self.assertTrue('result_directory' in result)
-        self.assertTrue('obj_ref' in result)
+        self.assertTrue('binned_contig_obj_ref' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
 
@@ -390,7 +337,7 @@ class kb_maxbinTest(unittest.TestCase):
 
         input_params = {
             'assembly_ref': self.assembly_ref,
-            'out_header': 'out_header',
+            'binned_contig_name': 'out_header',
             'workspace_name': self.getWsName(),
             'reads_list': [self.pe_reads_ref, self.pe_reads_ref, self.se_reads_ref],
             'thread': 4,
@@ -403,23 +350,6 @@ class kb_maxbinTest(unittest.TestCase):
         result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
 
         self.assertTrue('result_directory' in result)
-        self.assertTrue('obj_ref' in result)
+        self.assertTrue('binned_contig_obj_ref' in result)
         self.assertTrue('report_name' in result)
         self.assertTrue('report_ref' in result)
-
-        expect_files = [
-            'out_header.001.fasta',
-            'out_header.002.fasta',
-            'out_header.003.fasta',
-            'out_header.abundance',
-            'out_header.log',
-            'out_header.marker',
-            'out_header.marker_of_each_bin.tar.gz',
-            'out_header.noclass',
-            'out_header.summary',
-            'out_header.tooshort',
-            'out_header.abund1',
-            'out_header.abund2',
-            'out_header.abund3']
-
-        self.assertItemsEqual(os.listdir(result.get('result_directory')), expect_files)
