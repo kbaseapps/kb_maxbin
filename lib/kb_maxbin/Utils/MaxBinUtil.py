@@ -7,13 +7,13 @@ import errno
 import subprocess
 import shutil
 import sys
-import re
 import zipfile
 
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 from KBaseReport.KBaseReportClient import KBaseReport
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
+from MetagenomeUtils.MetagenomeUtilsClient import MetagenomeUtils
 
 
 def log(message, prefix_newline=False):
@@ -33,7 +33,7 @@ class MaxBinUtil:
         log('Start validating run_maxbin params')
 
         # check for required parameters
-        for p in ['assembly_ref', 'out_header', 'workspace_name', 'reads_list']:
+        for p in ['assembly_ref', 'binned_contig_name', 'workspace_name', 'reads_list']:
             if p not in params:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
 
@@ -51,18 +51,6 @@ class MaxBinUtil:
             else:
                 raise
 
-    def _fetch_summary(self, output):
-        """
-        _fetch_summary: fetch summary info from output
-        """
-        log('Starting fetch summary report')
-        start = '========== Job finished =========='
-        end = '========== Elapsed Time =========='
-        self.output_summary = ''
-
-        if len(output.split(start)) > 1:
-            self.output_summary = output.split(start)[1].split(end)[0]
-
     def _run_command(self, command):
         """
         _run_command: run command and print result
@@ -74,7 +62,6 @@ class MaxBinUtil:
         exitCode = pipe.returncode
 
         if (exitCode == 0):
-            self._fetch_summary(output)
             log('Executed commend:\n{}\n'.format(command) +
                 'Exit Code: {}\nOutput:\n{}'.format(exitCode, output))
         else:
@@ -137,37 +124,6 @@ class MaxBinUtil:
                     result_file_path.append(os.path.join(os.path.dirname(file_path), file))
 
         log('Saving reads file path(s) to: {}'.format(result_file))
-        with open(result_file, 'w') as file_handler:
-            for item in result_file_path:
-                file_handler.write("{}\n".format(item))
-
-        return result_file
-
-    def _stage_file_list(self, file_list):
-        """
-        _stage_file_list: download list of local file/ shock file to scratch area
-                          and write result_file_path to file
-        """
-
-        log('Processing file list: {}'.format(file_list))
-
-        result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
-        self._mkdir_p(result_directory)
-        result_file = os.path.join(result_directory, 'result.txt')
-
-        result_file_path = []
-
-        if 'shock_id' in file_list:
-            for file in file_list.get('shock_id'):
-                file_path = self._stage_file({'shock_id': file})
-                result_file_path.append(file_path)
-
-        if 'path' in file_list:
-            for file in file_list.get('path'):
-                file_path = self._stage_file({'path': file})
-                result_file_path.append(file_path)
-
-        log('Saving file path(s) to: {}'.format(result_file))
         with open(result_file, 'w') as file_handler:
             for item in result_file_path:
                 file_handler.write("{}\n".format(item))
@@ -283,56 +239,6 @@ class MaxBinUtil:
                     else:
                         upload_message = upload_message.replace(
                                                 '--------------------------\nSummary:\n\n', '')
-        if self.output_summary:
-            upload_message += self.output_summary
-        else:
-            upload_message += '\n--------------------------\nOutput files for this run:\n\n'
-            if header + '.summary' in file_list:
-                upload_message += 'Summary file: {}.summary\n'.format(header)
-                file_list.remove(header + '.summary')
-
-            if header + '.abundance' in file_list:
-                upload_message += 'Genome abundance info file: {}.abundance\n'.format(header)
-                file_list.remove(header + '.abundance')
-
-            if header + '.marker' in file_list:
-                upload_message += 'Marker counts: {}.marker\n'.format(header)
-                file_list.remove(header + '.marker')
-
-            if header + '.marker_of_each_bin.tar.gz' in file_list:
-                upload_message += 'Marker genes for each bin: '
-                upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
-                file_list.remove(header + '.marker_of_each_bin.tar.gz')
-
-            if header + '.001.fasta' in file_list:
-                upload_message += 'Bin files: '
-                bin_file = []
-                for file_name in file_list:
-                    if re.match(header + '\.\d{3}\.fasta', file_name):
-                        bin_file.append(file_name)
-
-                bin_file.sort()
-                upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
-                file_list = [item for item in file_list if item not in bin_file]
-
-            if header + '.noclass' in file_list:
-                upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
-                file_list.remove(header + '.noclass')
-
-            if header + '.tooshort' in file_list:
-                upload_message += 'Short sequences: {}.tooshort\n'.format(header)
-                file_list.remove(header + '.tooshort')
-
-            if header + '.log' in file_list:
-                upload_message += 'Log file: {}.log\n'.format(header)
-                file_list.remove(header + '.log')
-
-            if header + '.marker.pdf' in file_list:
-                upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
-                file_list.remove(header + '.marker.pdf')
-
-            if file_list:
-                upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
 
         log('Report message:\n{}'.format(upload_message))
 
@@ -359,6 +265,7 @@ class MaxBinUtil:
         self.dfu = DataFileUtil(self.callback_url)
         self.ru = ReadsUtils(self.callback_url)
         self.au = AssemblyUtil(self.callback_url)
+        self.mgu = MetagenomeUtils(self.callback_url)
 
     def run_maxbin(self, params):
         """
@@ -366,7 +273,7 @@ class MaxBinUtil:
 
         required params:
             assembly_ref: Metagenome assembly object reference
-            out_header: output file header
+            binned_contig_name: BinnedContig object name and output file header
             workspace_name: the name of the workspace it gets saved to.
             reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary)
                         upon which MaxBin will be run
@@ -386,8 +293,8 @@ class MaxBinUtil:
             'params:\n{}'.format(json.dumps(params, indent=1)))
 
         self._validate_run_maxbin_params(params)
+        params['out_header'] = params.get('binned_contig_name')
 
-        # contig_file = self._stage_file(params.get('contig_file'))
         contig_file = self._get_contig_file(params.get('assembly_ref'))
         params['contig_file_path'] = contig_file
 
@@ -418,11 +325,19 @@ class MaxBinUtil:
         log('Saved result files to: {}'.format(result_directory))
         log('Generated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
 
+        generate_binned_contig_param = {
+            'file_directory': result_directory,
+            'assembly_ref': params.get('assembly_ref'),
+            'binned_contig_name': params.get('binned_contig_name'),
+            'workspace_name': params.get('workspace_name')
+        }
+        binned_contig_obj_ref = self.mgu.binned_contig_obj_ref(generate_binned_contig_param)
+
         reportVal = self._generate_report(result_directory, params)
 
         returnVal = {
             'result_directory': result_directory,
-            'obj_ref': 'obj_ref'
+            'binned_contig_obj_ref': binned_contig_obj_ref
         }
 
         returnVal.update(reportVal)
