@@ -23,13 +23,16 @@
             }
         },
         {  
-            "id": "out_header",
+            "id": "binned_contig_name",
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
             "default_values": [ "" ],
             "field_type" : "text",
-            "text_options" : {}
+            "text_options" : {
+                "valid_ws_types" : [ "KBaseMetagenomes.BinnedContigs" ],
+                "is_output_name" : true
+            }
         },
         {
             "id" : "reads_list",
@@ -115,8 +118,8 @@
                     "target_property": "assembly_ref"
                 },
                 {
-                    "input_parameter": "out_header",
-                    "target_property": "out_header"
+                    "input_parameter": "binned_contig_name",
+                    "target_property": "binned_contig_name"
                 },
                 {
                     "input_parameter": "reads_list",
@@ -154,8 +157,8 @@
                     "target_property": "result_directory"
                 },
                 {
-                    "service_method_output_path": [0,"obj_ref"],
-                    "target_property": "obj_ref"
+                    "service_method_output_path": [0,"binned_contig_obj_ref"],
+                    "target_property": "binned_contig_obj_ref"
                 },
                 {
                     "service_method_output_path": [0, "report_name"],
