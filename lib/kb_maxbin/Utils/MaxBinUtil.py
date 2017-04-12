@@ -225,15 +225,16 @@ class MaxBinUtil:
 
         no_class_count = 0
         too_short_count = 0
-        file_list = os.listdir(result_directory)
-        for file in file_list:
-            if file.endswith('.noclass'):
-                with open(os.path.join(result_directory, file)) as file:
+        result_files = os.listdir(result_directory)
+        for file_name in result_files:
+            if file_name.endswith('.noclass'):
+                with open(os.path.join(result_directory, file_name)) as file:
                     for line in file:
                         if line.startswith('>'):
                             no_class_count += 1
-            if file.endswith('.tooshort'):
-                with open(os.path.join(result_directory, file)) as file:
+
+            if file_name.endswith('.tooshort'):
+                with open(os.path.join(result_directory, file_name)) as file:
                     for line in file:
                         if line.startswith('>'):
                             too_short_count += 1
