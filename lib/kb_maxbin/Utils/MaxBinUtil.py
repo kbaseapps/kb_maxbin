@@ -281,7 +281,7 @@ class MaxBinUtil:
                                                           binned_contig_obj_ref,
                                                           result_directory)
 
-        upload_message += '--------------------------\nOverview:\n\n'
+        upload_message += '\n--------------------------\nOverview:\n\n'
 
         upload_message += 'Binned contigs: {}\n'.format(binned_contig_count)
         upload_message += 'Input contigs: {}\n'.format(input_contig_count)
