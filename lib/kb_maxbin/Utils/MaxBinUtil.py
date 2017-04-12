@@ -215,7 +215,6 @@ class MaxBinUtil:
         binned_contig = self.dfu.get_objects({'object_refs': [binned_contig_obj_ref]})['data'][0]
 
         input_contig_count = assembly.get('data').get('num_contigs')
-        # total_bins_count = int(binned_contig.get('info')[-1].get('n_bins'))
 
         binned_contig_count = 0
         total_bins = binned_contig.get('data').get('bins')
@@ -225,15 +224,16 @@ class MaxBinUtil:
 
         no_class_count = 0
         too_short_count = 0
-        file_list = os.listdir(result_directory)
-        for file in file_list:
-            if file.endswith('.noclass'):
-                with open(os.path.join(result_directory, file)) as file:
+        result_files = os.listdir(result_directory)
+        for file_name in result_files:
+            if file_name.endswith('.noclass'):
+                with open(os.path.join(result_directory, file_name)) as file:
                     for line in file:
                         if line.startswith('>'):
                             no_class_count += 1
-            if file.endswith('.tooshort'):
-                with open(os.path.join(result_directory, file)) as file:
+
+            if file_name.endswith('.tooshort'):
+                with open(os.path.join(result_directory, file_name)) as file:
                     for line in file:
                         if line.startswith('>'):
                             too_short_count += 1
