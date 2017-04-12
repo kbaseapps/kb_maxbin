@@ -215,7 +215,6 @@ class MaxBinUtil:
         binned_contig = self.dfu.get_objects({'object_refs': [binned_contig_obj_ref]})['data'][0]
 
         input_contig_count = assembly.get('data').get('num_contigs')
-        # total_bins_count = int(binned_contig.get('info')[-1].get('n_bins'))
 
         binned_contig_count = 0
         total_bins = binned_contig.get('data').get('bins')
