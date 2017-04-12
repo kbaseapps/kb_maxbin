@@ -206,7 +206,42 @@ class MaxBinUtil:
 
         return output_files
 
-    def _generate_report(self, result_directory, params):
+    def _generate_overview_info(self, assembly_ref, binned_contig_obj_ref, result_directory):
+        """
+        _generate_overview_info: generate overview information from assembly and binnedcontig
+        """
+
+        assembly = self.dfu.get_objects({'object_refs': [assembly_ref]})['data'][0]
+        binned_contig = self.dfu.get_objects({'object_refs': [binned_contig_obj_ref]})['data'][0]
+
+        input_contig_count = assembly.get('data').get('num_contigs')
+        # total_bins_count = int(binned_contig.get('info')[-1].get('n_bins'))
+
+        binned_contig_count = 0
+        total_bins = binned_contig.get('data').get('bins')
+        total_bins_count = len(total_bins)
+        for bin in total_bins:
+            binned_contig_count += len(bin.get('contigs'))
+
+        no_class_count = 0
+        too_short_count = 0
+        file_list = os.listdir(result_directory)
+        for file in file_list:
+            if file.endswith('.noclass'):
+                with open(os.path.join(result_directory, file)) as file:
+                    for line in file:
+                        if line.startswith('>'):
+                            no_class_count += 1
+            if file.endswith('.tooshort'):
+                with open(os.path.join(result_directory, file)) as file:
+                    for line in file:
+                        if line.startswith('>'):
+                            too_short_count += 1
+
+        return (binned_contig_count, input_contig_count,
+                too_short_count, no_class_count, total_bins_count)
+
+    def _generate_report(self, binned_contig_obj_ref, result_directory, params):
         """
         generate_report: generate summary report
 
@@ -236,9 +271,23 @@ class MaxBinUtil:
                                                             line_list[0], line_list[1],
                                                             line_list[2], line_list[3],
                                                             number=len(header)+12)
-                    else:
-                        upload_message = upload_message.replace(
+        else:
+            upload_message = upload_message.replace(
                                                 '--------------------------\nSummary:\n\n', '')
+
+        (binned_contig_count, input_contig_count,
+         too_short_count, no_class_count,
+         total_bins_count) = self._generate_overview_info(params.get('assembly_ref'),
+                                                          binned_contig_obj_ref,
+                                                          result_directory)
+
+        upload_message += '--------------------------\nOverview:\n\n'
+
+        upload_message += 'Binned contigs: {}\n'.format(binned_contig_count)
+        upload_message += 'Input contigs: {}\n'.format(input_contig_count)
+        upload_message += 'Contigs too short: {}\n'.format(too_short_count)
+        upload_message += 'Contigs with no class: {}\n'.format(no_class_count)
+        upload_message += 'Total size of bins: {}\n'.format(total_bins_count)
 
         log('Report message:\n{}'.format(upload_message))
 
@@ -331,9 +380,10 @@ class MaxBinUtil:
             'binned_contig_name': params.get('binned_contig_name'),
             'workspace_name': params.get('workspace_name')
         }
-        binned_contig_obj_ref = self.mgu.file_to_binned_contigs(generate_binned_contig_param)
+        binned_contig_obj_ref = self.mgu.file_to_binned_contigs(
+                                    generate_binned_contig_param).get('binned_contig_obj_ref')
 
-        reportVal = self._generate_report(result_directory, params)
+        reportVal = self._generate_report(binned_contig_obj_ref, result_directory, params)
 
         returnVal = {
             'result_directory': result_directory,
