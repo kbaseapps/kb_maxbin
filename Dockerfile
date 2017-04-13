@@ -24,6 +24,7 @@ RUN pip install cffi --upgrade \
 # To install all the dependencies
 RUN apt-get install -y build-essential wget make curl unzip python
 RUN apt-get install -y r-base
+RUN apt-get install -y r-cran-gplots
 
 # To download the Maxbin software and untar it
 RUN cd /kb/dev_container/modules && \
