@@ -23,18 +23,19 @@ RUN pip install cffi --upgrade \
 
 # To install all the dependencies
 RUN apt-get install -y build-essential wget make curl unzip python
+RUN apt-get install -y r-base
 
 # To download the Maxbin software and untar it
 RUN cd /kb/dev_container/modules && \
     mkdir MaxBin && cd MaxBin && \
-    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.tar.gz/download &&\
+    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.2.tar.gz/download &&\
     tar xvf download && \
-    cd MaxBin-2.2/src && \
+    cd MaxBin-2.2.2/src && \
     make && \
     cd .. && \
     ./autobuild_auxiliary && \
     cd .. && \
-    cp -R MaxBin-2.2 /kb/deployment/bin/MaxBin
+    cp -R MaxBin-2.2.2 /kb/deployment/bin/MaxBin
 
 # -----------------------------------------
 
