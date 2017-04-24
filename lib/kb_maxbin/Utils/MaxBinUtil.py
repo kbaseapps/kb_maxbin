@@ -184,7 +184,7 @@ class MaxBinUtil:
         """
         _generate_output_file_list: zip result files and generate file_links for report
         """
-
+        log('Start packing result files')
         output_files = list()
 
         output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
@@ -214,6 +214,63 @@ class MaxBinUtil:
                                  'description': 'Visualization of the marker by MaxBin2 App'})
 
         return output_files
+
+    def _generate_html_report(self, result_directory, assembly_ref, binned_contig_obj_ref, header):
+        """
+        _generate_html_report: generate html summary report
+        """
+
+        log('Start generating html report')
+        html_report = list()
+
+        output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        self._mkdir_p(output_directory)
+        result_file_path = os.path.join(output_directory, 'report.html')
+        file_list = os.listdir(result_directory)
+
+        Summary_Table_Content = ''
+        if header + '.summary' in file_list:
+            with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
+                lines = summary_file.readlines()
+                first_line = True
+                for line in lines:
+                    Summary_Table_Content += '<tr>'
+                    for item in line.split('\t'):
+                        if first_line:
+                            Summary_Table_Content += '<th>{}</th>'.format(item)
+                        else:
+                            Summary_Table_Content += '<td>{}</td>'.format(item)
+                    first_line = False
+                    Summary_Table_Content += '</tr>'
+
+        Overview_Content = ''
+        (binned_contig_count, input_contig_count,
+         too_short_count, no_class_count,
+         total_bins_count) = self._generate_overview_info(assembly_ref,
+                                                          binned_contig_obj_ref,
+                                                          result_directory)
+
+        Overview_Content += '<p>Binned contigs: {}</p>'.format(binned_contig_count)
+        Overview_Content += '<p>Input contigs: {}</p>'.format(input_contig_count)
+        Overview_Content += '<p>Contigs too short: {}</p>'.format(too_short_count)
+        Overview_Content += '<p>Contigs with no class: {}</p>'.format(no_class_count)
+        Overview_Content += '<p>Total size of bins: {}</p>'.format(total_bins_count)
+
+        with open(result_file_path, 'w') as result_file:
+            with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
+                      'r') as report_template_file:
+                report_template = report_template_file.read()
+                report_template = report_template.replace('<p>Overview_Content</p>',
+                                                          Overview_Content)
+                report_template = report_template.replace('Summary_Table_Content',
+                                                          Summary_Table_Content)
+                result_file.write(report_template)
+
+        html_report.append({'path': result_file_path,
+                            'name': os.path.basename(result_file_path),
+                            'label': os.path.basename(result_file_path),
+                            'description': 'HTML summary report for MaxBin2 App'})
+        return html_report
 
     def _generate_overview_info(self, assembly_ref, binned_contig_obj_ref, result_directory):
         """
@@ -257,57 +314,20 @@ class MaxBinUtil:
         """
         log('Generating report')
 
-        uuid_string = str(uuid.uuid4())
-        upload_message = 'Job Finished\n\n'
-
-        file_list = os.listdir(result_directory)
-        header = params.get('out_header')
-
-        upload_message += '--------------------------\nSummary:\n\n'
-
-        if header + '.summary' in file_list:
-            with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
-                lines = summary_file.readlines()
-                for line in lines:
-                    line_list = line.split('\t')
-                    if len(line_list) == 5:
-                        upload_message += '{:{number}} {:10} {:15} {:15} {}'.format(
-                                                            line_list[0], line_list[1],
-                                                            line_list[2], line_list[3],
-                                                            line_list[4], number=len(header)+12)
-                    elif len(line_list) == 4:
-                        upload_message += '{:{number}} {:15} {:15} {}'.format(
-                                                            line_list[0], line_list[1],
-                                                            line_list[2], line_list[3],
-                                                            number=len(header)+12)
-        else:
-            upload_message = upload_message.replace(
-                                                '--------------------------\nSummary:\n\n', '')
-
-        (binned_contig_count, input_contig_count,
-         too_short_count, no_class_count,
-         total_bins_count) = self._generate_overview_info(params.get('assembly_ref'),
-                                                          binned_contig_obj_ref,
-                                                          result_directory)
-
-        upload_message += '\n--------------------------\nOverview:\n\n'
-
-        upload_message += 'Binned contigs: {}\n'.format(binned_contig_count)
-        upload_message += 'Input contigs: {}\n'.format(input_contig_count)
-        upload_message += 'Contigs too short: {}\n'.format(too_short_count)
-        upload_message += 'Contigs with no class: {}\n'.format(no_class_count)
-        upload_message += 'Total size of bins: {}\n'.format(total_bins_count)
-
-        log('Report message:\n{}'.format(upload_message))
-
         output_files = self._generate_output_file_list(result_directory)
 
+        output_html_files = self._generate_html_report(result_directory,
+                                                       params.get('assembly_ref'),
+                                                       binned_contig_obj_ref,
+                                                       params.get('out_header'))
+
         report_params = {
-              'message': upload_message,
-              'summary_window_height': 166.0,
+              'message': '',
               'workspace_name': params.get('workspace_name'),
               'file_links': output_files,
-              'report_object_name': 'kb_maxbin_report_' + uuid_string}
+              'html_links': output_html_files,
+              'direct_html_link_index': 0,
+              'report_object_name': 'kb_maxbin_report_' + str(uuid.uuid4())}
 
         kbase_report_client = KBaseReport(self.callback_url)
         output = kbase_report_client.create_extended_report(report_params)
