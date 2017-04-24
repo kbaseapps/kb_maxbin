@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <pre>
  * required params:
  * assembly_ref: Genome assembly object reference
- * out_header: output file header
+ * binned_contig_name: BinnedContig object name and output file header
  * workspace_name: the name of the workspace it gets saved to.
  * reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
  * optional params:
@@ -36,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "assembly_ref",
-    "out_header",
+    "binned_contig_name",
     "workspace_name",
     "reads_list",
     "thread",
@@ -50,8 +50,8 @@ public class MaxBinInputParams {
 
     @JsonProperty("assembly_ref")
     private java.lang.String assemblyRef;
-    @JsonProperty("out_header")
-    private java.lang.String outHeader;
+    @JsonProperty("binned_contig_name")
+    private java.lang.String binnedContigName;
     @JsonProperty("workspace_name")
     private java.lang.String workspaceName;
     @JsonProperty("reads_list")
@@ -85,18 +85,18 @@ public class MaxBinInputParams {
         return this;
     }
 
-    @JsonProperty("out_header")
-    public java.lang.String getOutHeader() {
-        return outHeader;
+    @JsonProperty("binned_contig_name")
+    public java.lang.String getBinnedContigName() {
+        return binnedContigName;
     }
 
-    @JsonProperty("out_header")
-    public void setOutHeader(java.lang.String outHeader) {
-        this.outHeader = outHeader;
+    @JsonProperty("binned_contig_name")
+    public void setBinnedContigName(java.lang.String binnedContigName) {
+        this.binnedContigName = binnedContigName;
     }
 
-    public MaxBinInputParams withOutHeader(java.lang.String outHeader) {
-        this.outHeader = outHeader;
+    public MaxBinInputParams withBinnedContigName(java.lang.String binnedContigName) {
+        this.binnedContigName = binnedContigName;
         return this;
     }
 
@@ -232,7 +232,7 @@ public class MaxBinInputParams {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((((((("MaxBinInputParams"+" [assemblyRef=")+ assemblyRef)+", outHeader=")+ outHeader)+", workspaceName=")+ workspaceName)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((("MaxBinInputParams"+" [assemblyRef=")+ assemblyRef)+", binnedContigName=")+ binnedContigName)+", workspaceName=")+ workspaceName)+", readsList=")+ readsList)+", thread=")+ thread)+", reassembly=")+ reassembly)+", probThreshold=")+ probThreshold)+", markerset=")+ markerset)+", minContigLength=")+ minContigLength)+", plotmarker=")+ plotmarker)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
