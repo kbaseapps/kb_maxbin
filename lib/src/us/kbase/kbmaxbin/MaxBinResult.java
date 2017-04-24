@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "result_directory",
-    "obj_ref",
+    "binned_contig_obj_ref",
     "report_name",
     "report_ref"
 })
@@ -32,8 +32,8 @@ public class MaxBinResult {
 
     @JsonProperty("result_directory")
     private String resultDirectory;
-    @JsonProperty("obj_ref")
-    private String objRef;
+    @JsonProperty("binned_contig_obj_ref")
+    private String binnedContigObjRef;
     @JsonProperty("report_name")
     private String reportName;
     @JsonProperty("report_ref")
@@ -55,18 +55,18 @@ public class MaxBinResult {
         return this;
     }
 
-    @JsonProperty("obj_ref")
-    public String getObjRef() {
-        return objRef;
+    @JsonProperty("binned_contig_obj_ref")
+    public String getBinnedContigObjRef() {
+        return binnedContigObjRef;
     }
 
-    @JsonProperty("obj_ref")
-    public void setObjRef(String objRef) {
-        this.objRef = objRef;
+    @JsonProperty("binned_contig_obj_ref")
+    public void setBinnedContigObjRef(String binnedContigObjRef) {
+        this.binnedContigObjRef = binnedContigObjRef;
     }
 
-    public MaxBinResult withObjRef(String objRef) {
-        this.objRef = objRef;
+    public MaxBinResult withBinnedContigObjRef(String binnedContigObjRef) {
+        this.binnedContigObjRef = binnedContigObjRef;
         return this;
     }
 
@@ -112,7 +112,7 @@ public class MaxBinResult {
 
     @Override
     public String toString() {
-        return ((((((((((("MaxBinResult"+" [resultDirectory=")+ resultDirectory)+", objRef=")+ objRef)+", reportName=")+ reportName)+", reportRef=")+ reportRef)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((("MaxBinResult"+" [resultDirectory=")+ resultDirectory)+", binnedContigObjRef=")+ binnedContigObjRef)+", reportName=")+ reportName)+", reportRef=")+ reportRef)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

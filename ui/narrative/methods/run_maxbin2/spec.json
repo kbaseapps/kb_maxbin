@@ -8,7 +8,7 @@
     "categories": ["active","assembly","communities"],
     "widgets": {
         "input": "kbaseNarrativeMethodInput",
-        "output" : "no-display"
+        "output" : "kbaseBinnedContigs"
     },
     "parameters": [ 
         {
@@ -159,6 +159,10 @@
                 {
                     "service_method_output_path": [0,"binned_contig_obj_ref"],
                     "target_property": "binned_contig_obj_ref"
+                },
+                {
+                    "service_method_output_path": [0,"binned_contig_obj_ref"],
+                    "target_property": "objRef"
                 },
                 {
                     "service_method_output_path": [0, "report_name"],
