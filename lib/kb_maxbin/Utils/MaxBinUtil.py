@@ -7,12 +7,13 @@ import errno
 import subprocess
 import shutil
 import sys
-import re
+import zipfile
 
 from DataFileUtil.DataFileUtilClient import DataFileUtil
 from KBaseReport.KBaseReportClient import KBaseReport
 from ReadsUtils.ReadsUtilsClient import ReadsUtils
 from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
+from MetagenomeUtils.MetagenomeUtilsClient import MetagenomeUtils
 
 
 def log(message, prefix_newline=False):
@@ -32,7 +33,7 @@ class MaxBinUtil:
         log('Start validating run_maxbin params')
 
         # check for required parameters
-        for p in ['assembly_ref', 'out_header', 'workspace_name', 'reads_list']:
+        for p in ['assembly_ref', 'binned_contig_name', 'workspace_name', 'reads_list']:
             if p not in params:
                 raise ValueError('"{}" parameter is required, but missing'.format(p))
 
@@ -50,18 +51,6 @@ class MaxBinUtil:
             else:
                 raise
 
-    def _fetch_summary(self, output):
-        """
-        _fetch_summary: fetch summary info from output
-        """
-        log('Starting fetch summary report')
-        start = '========== Job finished =========='
-        end = '========== Elapsed Time =========='
-        self.output_summary = ''
-
-        if len(output.split(start)) > 1:
-            self.output_summary = output.split(start)[1].split(end)[0]
-
     def _run_command(self, command):
         """
         _run_command: run command and print result
@@ -73,7 +62,6 @@ class MaxBinUtil:
         exitCode = pipe.returncode
 
         if (exitCode == 0):
-            self._fetch_summary(output)
             log('Executed commend:\n{}\n'.format(command) +
                 'Exit Code: {}\nOutput:\n{}'.format(exitCode, output))
         else:
@@ -123,7 +111,7 @@ class MaxBinUtil:
 
         result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
         self._mkdir_p(result_directory)
-        result_file = os.path.join(result_directory, 'result.txt')
+        result_file = os.path.join(result_directory, 'reads_list_file.txt')
 
         result_file_path = []
 
@@ -136,37 +124,6 @@ class MaxBinUtil:
                     result_file_path.append(os.path.join(os.path.dirname(file_path), file))
 
         log('Saving reads file path(s) to: {}'.format(result_file))
-        with open(result_file, 'w') as file_handler:
-            for item in result_file_path:
-                file_handler.write("{}\n".format(item))
-
-        return result_file
-
-    def _stage_file_list(self, file_list):
-        """
-        _stage_file_list: download list of local file/ shock file to scratch area
-                          and write result_file_path to file
-        """
-
-        log('Processing file list: {}'.format(file_list))
-
-        result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
-        self._mkdir_p(result_directory)
-        result_file = os.path.join(result_directory, 'result.txt')
-
-        result_file_path = []
-
-        if 'shock_id' in file_list:
-            for file in file_list.get('shock_id'):
-                file_path = self._stage_file({'shock_id': file})
-                result_file_path.append(file_path)
-
-        if 'path' in file_list:
-            for file in file_list.get('path'):
-                file_path = self._stage_file({'path': file})
-                result_file_path.append(file_path)
-
-        log('Saving file path(s) to: {}'.format(result_file))
         with open(result_file, 'w') as file_handler:
             for item in result_file_path:
                 file_handler.write("{}\n".format(item))
@@ -223,97 +180,155 @@ class MaxBinUtil:
 
         return command
 
-    def _generate_report(self, result_directory, params):
+    def _generate_output_file_list(self, result_directory):
+        """
+        _generate_output_file_list: zip result files and generate file_links for report
+        """
+        log('Start packing result files')
+        output_files = list()
+
+        output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        self._mkdir_p(output_directory)
+        result_file = os.path.join(output_directory, 'maxbin_result.zip')
+        report_file = None
+
+        with zipfile.ZipFile(result_file, 'w',
+                             zipfile.ZIP_DEFLATED,
+                             allowZip64=True) as zip_file:
+            for root, dirs, files in os.walk(result_directory):
+                for file in files:
+                    if not (file.endswith('.fasta') or file.endswith('.DS_Store')):
+                        zip_file.write(os.path.join(root, file), file)
+                    if file.endswith('.marker.pdf'):
+                        report_file = os.path.join(root, file)
+
+        output_files.append({'path': result_file,
+                             'name': os.path.basename(result_file),
+                             'label': os.path.basename(result_file),
+                             'description': 'File(s) generated by MaxBin2 App'})
+
+        if report_file:
+            output_files.append({'path': report_file,
+                                 'name': os.path.basename(report_file),
+                                 'label': os.path.basename(report_file),
+                                 'description': 'Visualization of the marker by MaxBin2 App'})
+
+        return output_files
+
+    def _generate_html_report(self, result_directory, assembly_ref, binned_contig_obj_ref, header):
+        """
+        _generate_html_report: generate html summary report
+        """
+
+        log('Start generating html report')
+        html_report = list()
+
+        output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        self._mkdir_p(output_directory)
+        result_file_path = os.path.join(output_directory, 'report.html')
+        file_list = os.listdir(result_directory)
+
+        Summary_Table_Content = ''
+        if header + '.summary' in file_list:
+            with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
+                lines = summary_file.readlines()
+                first_line = True
+                for line in lines:
+                    Summary_Table_Content += '<tr>'
+                    for item in line.split('\t'):
+                        if first_line:
+                            Summary_Table_Content += '<th>{}</th>'.format(item)
+                        else:
+                            Summary_Table_Content += '<td>{}</td>'.format(item)
+                    first_line = False
+                    Summary_Table_Content += '</tr>'
+
+        Overview_Content = ''
+        (binned_contig_count, input_contig_count,
+         too_short_count, no_class_count,
+         total_bins_count) = self._generate_overview_info(assembly_ref,
+                                                          binned_contig_obj_ref,
+                                                          result_directory)
+
+        Overview_Content += '<p>Binned contigs: {}</p>'.format(binned_contig_count)
+        Overview_Content += '<p>Input contigs: {}</p>'.format(input_contig_count)
+        Overview_Content += '<p>Contigs too short: {}</p>'.format(too_short_count)
+        Overview_Content += '<p>Contigs with no class: {}</p>'.format(no_class_count)
+        Overview_Content += '<p>Total size of bins: {}</p>'.format(total_bins_count)
+
+        with open(result_file_path, 'w') as result_file:
+            with open(os.path.join(os.path.dirname(__file__), 'report_template.html'),
+                      'r') as report_template_file:
+                report_template = report_template_file.read()
+                report_template = report_template.replace('<p>Overview_Content</p>',
+                                                          Overview_Content)
+                report_template = report_template.replace('Summary_Table_Content',
+                                                          Summary_Table_Content)
+                result_file.write(report_template)
+
+        html_report.append({'path': result_file_path,
+                            'name': os.path.basename(result_file_path),
+                            'label': os.path.basename(result_file_path),
+                            'description': 'HTML summary report for MaxBin2 App'})
+        return html_report
+
+    def _generate_overview_info(self, assembly_ref, binned_contig_obj_ref, result_directory):
+        """
+        _generate_overview_info: generate overview information from assembly and binnedcontig
+        """
+
+        assembly = self.dfu.get_objects({'object_refs': [assembly_ref]})['data'][0]
+        binned_contig = self.dfu.get_objects({'object_refs': [binned_contig_obj_ref]})['data'][0]
+
+        input_contig_count = assembly.get('data').get('num_contigs')
+
+        binned_contig_count = 0
+        total_bins = binned_contig.get('data').get('bins')
+        total_bins_count = len(total_bins)
+        for bin in total_bins:
+            binned_contig_count += len(bin.get('contigs'))
+
+        no_class_count = 0
+        too_short_count = 0
+        result_files = os.listdir(result_directory)
+        for file_name in result_files:
+            if file_name.endswith('.noclass'):
+                with open(os.path.join(result_directory, file_name)) as file:
+                    for line in file:
+                        if line.startswith('>'):
+                            no_class_count += 1
+
+            if file_name.endswith('.tooshort'):
+                with open(os.path.join(result_directory, file_name)) as file:
+                    for line in file:
+                        if line.startswith('>'):
+                            too_short_count += 1
+
+        return (binned_contig_count, input_contig_count,
+                too_short_count, no_class_count, total_bins_count)
+
+    def _generate_report(self, binned_contig_obj_ref, result_directory, params):
         """
         generate_report: generate summary report
 
         """
         log('Generating report')
 
-        uuid_string = str(uuid.uuid4())
-        upload_message = 'Job Finished\n\n'
+        output_files = self._generate_output_file_list(result_directory)
 
-        file_list = os.listdir(result_directory)
-        header = params.get('out_header')
-
-        upload_message += '--------------------------\nSummary:\n\n'
-
-        if header + '.summary' in file_list:
-            with open(os.path.join(result_directory, header + '.summary'), 'r') as summary_file:
-                lines = summary_file.readlines()
-                for line in lines:
-                    line_list = line.split('\t')
-                    if len(line_list) == 5:
-                        upload_message += '{:{number}} {:10} {:15} {:15} {}'.format(
-                                                            line_list[0], line_list[1],
-                                                            line_list[2], line_list[3],
-                                                            line_list[4], number=len(header)+12)
-                    elif len(line_list) == 4:
-                        upload_message += '{:{number}} {:15} {:15} {}'.format(
-                                                            line_list[0], line_list[1],
-                                                            line_list[2], line_list[3],
-                                                            number=len(header)+12)
-                    else:
-                        upload_message = upload_message.replace(
-                                                '--------------------------\nSummary:\n\n', '')
-        if self.output_summary:
-            upload_message += self.output_summary
-        else:
-            upload_message += '\n--------------------------\nOutput files for this run:\n\n'
-            if header + '.summary' in file_list:
-                upload_message += 'Summary file: {}.summary\n'.format(header)
-                file_list.remove(header + '.summary')
-
-            if header + '.abundance' in file_list:
-                upload_message += 'Genome abundance info file: {}.abundance\n'.format(header)
-                file_list.remove(header + '.abundance')
-
-            if header + '.marker' in file_list:
-                upload_message += 'Marker counts: {}.marker\n'.format(header)
-                file_list.remove(header + '.marker')
-
-            if header + '.marker_of_each_bin.tar.gz' in file_list:
-                upload_message += 'Marker genes for each bin: '
-                upload_message += '{}.marker_of_each_bin.tar.gz\n'.format(header)
-                file_list.remove(header + '.marker_of_each_bin.tar.gz')
-
-            if header + '.001.fasta' in file_list:
-                upload_message += 'Bin files: '
-                bin_file = []
-                for file_name in file_list:
-                    if re.match(header + '\.\d{3}\.fasta', file_name):
-                        bin_file.append(file_name)
-
-                bin_file.sort()
-                upload_message += '{} - {}\n'.format(bin_file[0], bin_file[-1])
-                file_list = [item for item in file_list if item not in bin_file]
-
-            if header + '.noclass' in file_list:
-                upload_message += 'Unbinned sequences: {}.noclass\n'.format(header)
-                file_list.remove(header + '.noclass')
-
-            if header + '.tooshort' in file_list:
-                upload_message += 'Short sequences: {}.tooshort\n'.format(header)
-                file_list.remove(header + '.tooshort')
-
-            if header + '.log' in file_list:
-                upload_message += 'Log file: {}.log\n'.format(header)
-                file_list.remove(header + '.log')
-
-            if header + '.marker.pdf' in file_list:
-                upload_message += 'Visualization file: {}.marker.pdf\n'.format(header)
-                file_list.remove(header + '.marker.pdf')
-
-            if file_list:
-                upload_message += 'Other files:\n{}'.format('\n'.join(file_list))
-
-        log('Report message:\n{}'.format(upload_message))
+        output_html_files = self._generate_html_report(result_directory,
+                                                       params.get('assembly_ref'),
+                                                       binned_contig_obj_ref,
+                                                       params.get('out_header'))
 
         report_params = {
-              'message': upload_message,
-              'summary_window_height': 166.0,
+              'message': '',
               'workspace_name': params.get('workspace_name'),
-              'report_object_name': 'kb_maxbin_report_' + uuid_string}
+              'file_links': output_files,
+              'html_links': output_html_files,
+              'direct_html_link_index': 0,
+              'html_window_height': 266,
+              'report_object_name': 'kb_maxbin_report_' + str(uuid.uuid4())}
 
         kbase_report_client = KBaseReport(self.callback_url)
         output = kbase_report_client.create_extended_report(report_params)
@@ -329,6 +344,7 @@ class MaxBinUtil:
         self.dfu = DataFileUtil(self.callback_url)
         self.ru = ReadsUtils(self.callback_url)
         self.au = AssemblyUtil(self.callback_url)
+        self.mgu = MetagenomeUtils(self.callback_url)
 
     def run_maxbin(self, params):
         """
@@ -336,7 +352,7 @@ class MaxBinUtil:
 
         required params:
             assembly_ref: Metagenome assembly object reference
-            out_header: output file header
+            binned_contig_name: BinnedContig object name and output file header
             workspace_name: the name of the workspace it gets saved to.
             reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary)
                         upon which MaxBin will be run
@@ -356,8 +372,8 @@ class MaxBinUtil:
             'params:\n{}'.format(json.dumps(params, indent=1)))
 
         self._validate_run_maxbin_params(params)
+        params['out_header'] = params.get('binned_contig_name')
 
-        # contig_file = self._stage_file(params.get('contig_file'))
         contig_file = self._get_contig_file(params.get('assembly_ref'))
         params['contig_file_path'] = contig_file
 
@@ -388,11 +404,20 @@ class MaxBinUtil:
         log('Saved result files to: {}'.format(result_directory))
         log('Generated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
 
-        reportVal = self._generate_report(result_directory, params)
+        generate_binned_contig_param = {
+            'file_directory': result_directory,
+            'assembly_ref': params.get('assembly_ref'),
+            'binned_contig_name': params.get('binned_contig_name'),
+            'workspace_name': params.get('workspace_name')
+        }
+        binned_contig_obj_ref = self.mgu.file_to_binned_contigs(
+                                    generate_binned_contig_param).get('binned_contig_obj_ref')
+
+        reportVal = self._generate_report(binned_contig_obj_ref, result_directory, params)
 
         returnVal = {
             'result_directory': result_directory,
-            'obj_ref': 'obj_ref'
+            'binned_contig_obj_ref': binned_contig_obj_ref
         }
 
         returnVal.update(reportVal)

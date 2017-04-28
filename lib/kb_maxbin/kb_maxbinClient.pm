@@ -122,22 +122,21 @@ sub new
 $params is a kb_maxbin.MaxBinInputParams
 $returnVal is a kb_maxbin.MaxBinResult
 MaxBinInputParams is a reference to a hash where the following keys are defined:
-	assembly_ref has a value which is a kb_maxbin.assembly_ref
-	out_header has a value which is a string
+	assembly_ref has a value which is a kb_maxbin.obj_ref
+	binned_contig_name has a value which is a string
 	workspace_name has a value which is a string
-	reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
+	reads_list has a value which is a reference to a list where each element is a kb_maxbin.obj_ref
 	thread has a value which is an int
 	reassembly has a value which is a kb_maxbin.boolean
 	prob_threshold has a value which is a float
 	markerset has a value which is an int
 	min_contig_length has a value which is an int
 	plotmarker has a value which is a kb_maxbin.boolean
-assembly_ref is a string
-reads_ref is a string
+obj_ref is a string
 boolean is an int
 MaxBinResult is a reference to a hash where the following keys are defined:
 	result_directory has a value which is a string
-	obj_ref has a value which is a string
+	binned_contig_obj_ref has a value which is a kb_maxbin.obj_ref
 	report_name has a value which is a string
 	report_ref has a value which is a string
 
@@ -150,22 +149,21 @@ MaxBinResult is a reference to a hash where the following keys are defined:
 $params is a kb_maxbin.MaxBinInputParams
 $returnVal is a kb_maxbin.MaxBinResult
 MaxBinInputParams is a reference to a hash where the following keys are defined:
-	assembly_ref has a value which is a kb_maxbin.assembly_ref
-	out_header has a value which is a string
+	assembly_ref has a value which is a kb_maxbin.obj_ref
+	binned_contig_name has a value which is a string
 	workspace_name has a value which is a string
-	reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
+	reads_list has a value which is a reference to a list where each element is a kb_maxbin.obj_ref
 	thread has a value which is an int
 	reassembly has a value which is a kb_maxbin.boolean
 	prob_threshold has a value which is a float
 	markerset has a value which is an int
 	min_contig_length has a value which is an int
 	plotmarker has a value which is a kb_maxbin.boolean
-assembly_ref is a string
-reads_ref is a string
+obj_ref is a string
 boolean is an int
 MaxBinResult is a reference to a hash where the following keys are defined:
 	result_directory has a value which is a string
-	obj_ref has a value which is a string
+	binned_contig_obj_ref has a value which is a kb_maxbin.obj_ref
 	report_name has a value which is a string
 	report_ref has a value which is a string
 
@@ -347,7 +345,7 @@ an int
 
 
 
-=head2 assembly_ref
+=head2 obj_ref
 
 =over 4
 
@@ -378,144 +376,6 @@ a string
 
 
 
-=head2 reads_ref
-
-=over 4
-
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a string
-</pre>
-
-=end html
-
-=begin text
-
-a string
-
-=end text
-
-=back
-
-
-
-=head2 bin_id
-
-=over 4
-
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a string
-</pre>
-
-=end html
-
-=begin text
-
-a string
-
-=end text
-
-=back
-
-
-
-=head2 contig_id
-
-=over 4
-
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a string
-</pre>
-
-=end html
-
-=begin text
-
-a string
-
-=end text
-
-=back
-
-
-
-=head2 contig_obj_ref
-
-=over 4
-
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a string
-</pre>
-
-=end html
-
-=begin text
-
-a string
-
-=end text
-
-=back
-
-
-
-=head2 BinnedAssembly
-
-=over 4
-
-
-
-=item Definition
-
-=begin html
-
-<pre>
-a reference to a hash where the following keys are defined:
-bin_ids has a value which is a reference to a list where each element is a kb_maxbin.bin_id
-bin2contig_id has a value which is a reference to a hash where the key is a kb_maxbin.bin_id and the value is a reference to a list where each element is a kb_maxbin.contig_id
-contig_id2contig_ref has a value which is a reference to a hash where the key is a kb_maxbin.contig_id and the value is a kb_maxbin.contig_obj_ref
-
-</pre>
-
-=end html
-
-=begin text
-
-a reference to a hash where the following keys are defined:
-bin_ids has a value which is a reference to a list where each element is a kb_maxbin.bin_id
-bin2contig_id has a value which is a reference to a hash where the key is a kb_maxbin.bin_id and the value is a reference to a list where each element is a kb_maxbin.contig_id
-contig_id2contig_ref has a value which is a reference to a hash where the key is a kb_maxbin.contig_id and the value is a kb_maxbin.contig_obj_ref
-
-
-=end text
-
-=back
-
-
-
 =head2 MaxBinInputParams
 
 =over 4
@@ -526,7 +386,7 @@ contig_id2contig_ref has a value which is a reference to a hash where the key is
 
 required params:
 assembly_ref: Genome assembly object reference
-out_header: output file header
+binned_contig_name: BinnedContig object name and output file header
 workspace_name: the name of the workspace it gets saved to.
 reads_list: list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
 
@@ -548,10 +408,10 @@ ref: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
 
 <pre>
 a reference to a hash where the following keys are defined:
-assembly_ref has a value which is a kb_maxbin.assembly_ref
-out_header has a value which is a string
+assembly_ref has a value which is a kb_maxbin.obj_ref
+binned_contig_name has a value which is a string
 workspace_name has a value which is a string
-reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
+reads_list has a value which is a reference to a list where each element is a kb_maxbin.obj_ref
 thread has a value which is an int
 reassembly has a value which is a kb_maxbin.boolean
 prob_threshold has a value which is a float
@@ -566,10 +426,10 @@ plotmarker has a value which is a kb_maxbin.boolean
 =begin text
 
 a reference to a hash where the following keys are defined:
-assembly_ref has a value which is a kb_maxbin.assembly_ref
-out_header has a value which is a string
+assembly_ref has a value which is a kb_maxbin.obj_ref
+binned_contig_name has a value which is a string
 workspace_name has a value which is a string
-reads_list has a value which is a reference to a list where each element is a kb_maxbin.reads_ref
+reads_list has a value which is a reference to a list where each element is a kb_maxbin.obj_ref
 thread has a value which is an int
 reassembly has a value which is a kb_maxbin.boolean
 prob_threshold has a value which is a float
@@ -604,7 +464,7 @@ report_ref: report reference generated by KBaseReport
 <pre>
 a reference to a hash where the following keys are defined:
 result_directory has a value which is a string
-obj_ref has a value which is a string
+binned_contig_obj_ref has a value which is a kb_maxbin.obj_ref
 report_name has a value which is a string
 report_ref has a value which is a string
 
@@ -616,7 +476,7 @@ report_ref has a value which is a string
 
 a reference to a hash where the following keys are defined:
 result_directory has a value which is a string
-obj_ref has a value which is a string
+binned_contig_obj_ref has a value which is a kb_maxbin.obj_ref
 report_name has a value which is a string
 report_ref has a value which is a string
 

@@ -1,0 +1,68 @@
+MaxBin 2.2.1
+Input contig: /kb/module/work/tmp/4600e138-c93c-4f4b-9d31-66bef5610ac0.fasta
+out header: out_header
+Thread: 4
+Probability threshold: 0.7
+Switch to 40 marker genes universal for bacteria and archaea.
+Min contig length: 1500
+Located reads file [/kb/module/work/tmp/a9d2064c-022b-4be4-8382-218c5c8bcebc/d96be053-699a-4c21-90ce-a479cdd3d0e2.inter.fastq]
+Located reads file [/kb/module/work/tmp/ab14b7ca-71b4-4ed7-b512-35b66782396f/d96be053-699a-4c21-90ce-a479cdd3d0e2.inter.fastq]
+Located reads file [/kb/module/work/tmp/3099e271-f9d2-43a3-a7dd-86a6dde067ba/d83aa038-3e82-41a7-b14d-d32d57eec0aa.single.fastq]
+Running Bowtie2 on reads file [/kb/module/work/tmp/a9d2064c-022b-4be4-8382-218c5c8bcebc/d96be053-699a-4c21-90ce-a479cdd3d0e2.inter.fastq]...this may take a while...
+Running Bowtie2 on reads file [/kb/module/work/tmp/ab14b7ca-71b4-4ed7-b512-35b66782396f/d96be053-699a-4c21-90ce-a479cdd3d0e2.inter.fastq]...this may take a while...
+Running Bowtie2 on reads file [/kb/module/work/tmp/3099e271-f9d2-43a3-a7dd-86a6dde067ba/d83aa038-3e82-41a7-b14d-d32d57eec0aa.single.fastq]...this may take a while...
+Searching against 40 marker genes to find starting seed contigs for [/kb/module/work/tmp/4600e138-c93c-4f4b-9d31-66bef5610ac0.fasta]...
+Done data collection. Running MaxBin...
+Command: /kb/deployment/bin/MaxBin/src/MaxBin -fasta out_header.contig.tmp  -abund out_header.contig.tmp.reads.abund1 -abund2 out_header.contig.tmp.reads.abund2 -abund3 out_header.contig.tmp.reads.abund3 -seed out_header.seed -out out_header -min_contig_length 1500 -prob_threshold 0.7 -thread 4
+Minimum contig length set to 1500.
+Reading seed list...
+Looking for seeds in sequences.
+	NODE_26_length_389469_cov_18.834772 [0.000100] [0.000100] [0.000100]
+	NODE_2186_length_17718_cov_9.466136 [0.000100] [0.000100] [0.000100]
+	NODE_4489_length_3127_cov_7.468180 [0.000100] [0.000100] [0.000100]
+Get 3 seeds.
+
+Start EM process.
+Iteration 1
+Iteration 2
+Iteration 3
+Iteration 4
+Iteration 5
+Iteration 6
+Iteration 7
+Iteration 8
+Iteration 9
+Iteration 10
+
+EM finishes successfully.
+
+Classifying sequences based on the EM result.
+Minimum probability for binning: 0.70
+Ignoring 0 bins without any sequences.
+Number of unclassified sequences: 22 (2.33%)
+Elapsed time:  0 days 00:00:02
+
+Deleting intermediate files.
+
+
+========== Job finished ==========
+Yielded 3 bins for contig (scaffold) file /kb/module/work/tmp/4600e138-c93c-4f4b-9d31-66bef5610ac0.fasta
+
+Here are the output files for this run.
+Please refer to the README file for further details.
+
+Summary file: out_header.summary
+Genome abundance info file: out_header.abundance
+Marker counts: out_header.marker
+Marker genes for each bin: out_header.marker_of_each_gene.tar.gz
+Bin files: out_header.001.fasta - out_header.003.fasta
+Unbinned sequences: out_header.noclass
+
+Store abundance information of reads file [/kb/module/work/tmp/a9d2064c-022b-4be4-8382-218c5c8bcebc/d96be053-699a-4c21-90ce-a479cdd3d0e2.inter.fastq] in [out_header.abund1].
+Store abundance information of reads file [/kb/module/work/tmp/ab14b7ca-71b4-4ed7-b512-35b66782396f/d96be053-699a-4c21-90ce-a479cdd3d0e2.inter.fastq] in [out_header.abund2].
+Store abundance information of reads file [/kb/module/work/tmp/3099e271-f9d2-43a3-a7dd-86a6dde067ba/d83aa038-3e82-41a7-b14d-d32d57eec0aa.single.fastq] in [out_header.abund3].
+
+
+========== Elapsed Time ==========
+0 hours 0 minutes and 26 seconds.
+

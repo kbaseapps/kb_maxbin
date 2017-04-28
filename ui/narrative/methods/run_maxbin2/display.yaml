@@ -33,10 +33,10 @@ parameters :
         short-hint : Metagenome assembly object
         long-hint  : Metagenome assembly object
 
-    out_header :
-        ui-name : Output File Header
-        short-hint : Output file header
-        long-hint  : Output file header
+    binned_contig_name :
+        ui-name : BinnedContig Object Name
+        short-hint : Output BinnedContig object name
+        long-hint  : Output BinnedContig object name
 
     reads_list :
         ui-name : Read Library Object
