@@ -29,14 +29,14 @@ RUN apt-get install -y r-cran-gplots
 # To download the Maxbin software and untar it
 RUN cd /kb/dev_container/modules && \
     mkdir MaxBin && cd MaxBin && \
-    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.2.tar.gz/download &&\
+    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.3.tar.gz/download &&\
     tar xvf download && \
-    cd MaxBin-2.2.2/src && \
+    cd MaxBin-2.2.3/src && \
     make && \
     cd .. && \
     ./autobuild_auxiliary && \
     cd .. && \
-    cp -R MaxBin-2.2.2 /kb/deployment/bin/MaxBin
+    cp -R MaxBin-2.2.3 /kb/deployment/bin/MaxBin
 
 # -----------------------------------------
 
