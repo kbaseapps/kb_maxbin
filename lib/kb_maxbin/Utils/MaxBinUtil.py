@@ -253,7 +253,7 @@ class MaxBinUtil:
         Overview_Content += '<p>Binned contigs: {}</p>'.format(binned_contig_count)
         Overview_Content += '<p>Input contigs: {}</p>'.format(input_contig_count)
         Overview_Content += '<p>Contigs too short: {}</p>'.format(too_short_count)
-        Overview_Content += '<p>Contigs with no class: {}</p>'.format(no_class_count)
+        Overview_Content += '<p>Contigs not in bins: {}</p>'.format(no_class_count)
         Overview_Content += '<p>Total size of bins: {}</p>'.format(total_bins_count)
 
         with open(result_file_path, 'w') as result_file:
@@ -372,7 +372,8 @@ class MaxBinUtil:
             'params:\n{}'.format(json.dumps(params, indent=1)))
 
         self._validate_run_maxbin_params(params)
-        params['out_header'] = params.get('binned_contig_name')
+        #params['out_header'] = params.get('binned_contig_name')
+        params['out_header'] = 'Bin'
 
         contig_file = self._get_contig_file(params.get('assembly_ref'))
         params['contig_file_path'] = contig_file
