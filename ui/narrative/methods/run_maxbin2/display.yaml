@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name     : MaxBin2 - Contig Binning
+name     : MaxBin2 Contig Binning - v2.2.3
 subtitle : Bin assembled metagenomic contigs by taxonomy
 tooltip  : Bin assembled metagenomic contigs by taxonomy
 
