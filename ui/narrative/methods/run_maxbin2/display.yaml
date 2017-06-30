@@ -45,8 +45,8 @@ parameters :
 
     prob_threshold :
         ui-name : Probability Threshold
-        short-hint : Minimum probability for EM algorithm (default 0.9)
-        long-hint  : Minimum probability for EM algorithm (default 0.9). Sequences that do not meet the threshold are discarded as 'unclassified'.
+        short-hint : Minimum probability for EM algorithm (default 0.8)
+        long-hint  : Minimum probability for EM algorithm (default 0.8). Sequences that do not meet the threshold are discarded as 'unclassified'.
 
     markerset :
         ui-name : Marker Set
