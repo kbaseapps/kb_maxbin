@@ -59,7 +59,7 @@ parameters :
         long-hint  : minimum contig length (default 1000)
 
     plotmarker :
-        ui-name : Plot Marker
+        ui-name : Plot Markers per Contig
         short-hint : Specify this option if you want to plot the markers in each contig
         long-hint  : Specify this option if you want to plot the markers in each contig
 
