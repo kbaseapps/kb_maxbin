@@ -372,7 +372,7 @@ class MaxBinUtil:
             'params:\n{}'.format(json.dumps(params, indent=1)))
 
         self._validate_run_maxbin_params(params)
-        #params['out_header'] = params.get('binned_contig_name')
+        # params['out_header'] = params.get('binned_contig_name')
         params['out_header'] = 'Bin'
 
         contig_file = self._get_contig_file(params.get('assembly_ref'))
