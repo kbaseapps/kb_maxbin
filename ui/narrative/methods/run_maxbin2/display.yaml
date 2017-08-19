@@ -2,12 +2,16 @@
 # define display information
 #
 name     : MaxBin2 Contig Binning - v2.2.3
-subtitle : Bin assembled metagenomic contigs by taxonomy
-tooltip  : Bin assembled metagenomic contigs by taxonomy
+subtitle : Bin assembled metagenomic contigs
+tooltip  : Group assembled metagenomic contigs into lineages (Binning) using depth-of-coverage, nucleotide composition, and marker genes
 
 icon: maxbin2-green.png
 
-screenshots: []
+screenshots:
+
+    - maxbin_input_cell.png
+    - maxbin_output_report.png
+    - maxbin_output_binned_contig_view.png
 
 #
 # define a set of similar methods that might be useful to the user
@@ -22,7 +26,7 @@ suggestions:
         related:
             []
         next:
-            []
+            ["kb_Msuite.run_checkM_lineage_wf"]
 
 #
 # Configure the display and description of parameters
@@ -64,8 +68,8 @@ parameters :
         long-hint  : Specify this option if you want to plot the markers in each contig
 
 description : |
-    <p>MaxBin is a software that is capable of clustering metagenomic contigs into different bins, each consists of contigs from one species.</p>
+    <p>MaxBin2 clusters metagenomic contigs into different "bins", each of which corresponds to a putative population genome.</p>
 
-    <p>MaxBin uses the nucleotide composition information and contig abundance information to do achieve binning through an Expectation-Maximization algorithm.</p>
+    <p>MaxBin uses the nucleotide composition information and contig abundance information (measured by depth-of-coverage by aligning the reads to the contigs) to do achieve binning through an Expectation-Maximization algorithm.</p>
 
-    <p>For more details: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt </p>
+    <p>For more details: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt</p>
