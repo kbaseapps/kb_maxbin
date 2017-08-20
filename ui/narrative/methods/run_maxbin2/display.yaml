@@ -93,6 +93,7 @@ description : |
     <p><b><i>Marker Set:</i></b> Phylogenetic markers are used as a term in the EM algorithm.  The user can select between 107 markers that correspond primarily to bacterial lineages, or 40 markers that are found in both bacteria and archaea.  If a user expects that there are mostly bacteria in their samples, they should select the set of 107. </p>
     <p><b><i>Minimum Contig Length:</i></b> Some assemblies contain shorter contigs that may slow down analysis and are of reduced value in that they may not contain complete genes as well as be too short for statistically meaningful nucleotide composition profiles.  A value of 1000 bp is a reasonable cutoff.</p>
     <p><b><i>Plot Marker:</i></b> The Phylogenetic marker genes found can be indicated and downloaded.</p>
+    <p><hr></p>
     <p><b>Output:</b></p>
     <p><b><i>Output Object:</i></b> The BinnedContig object contains the bin assignments for each contig in the Assembly object.</p>
     <p><b><i>Output Bin Summary Report:</i></b> A table with the characteristics of each of the bins, including the bin name, its depth of coverage (abundance), the esitimated completeness (using the phylogenetic marker genes found in each bin), an estimate of the genome size (combining the completeness estimation with the observed contig lengths for that bin), and the GC % found in the binned contigs.</p>
