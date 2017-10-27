@@ -1,5 +1,5 @@
 {
-    "ver": "1.0.0",
+    "ver": "1.0.1",
     "authors": [
         "dylan", "tgu2"
     ],
@@ -42,7 +42,7 @@
             "default_values" : [ "" ],
             "field_type" : "text",
             "text_options" : {
-              "valid_ws_types" : ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary"]
+              "valid_ws_types" : ["KBaseFile.PairedEndLibrary", "KBaseFile.SingleEndLibrary", "KBaseAssembly.PairedEndLibrary", "KBaseAssembly.SingleEndLibrary"]
             }
         },
         {

@@ -76,7 +76,7 @@ class MaxBinUtil:
 
         log('Processing file: {}'.format(file))
 
-        input_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        input_directory = os.path.join(self.scratch, 'input_'+str(uuid.uuid4()))
         self._mkdir_p(input_directory)
 
         if file.get('path'):
@@ -109,7 +109,7 @@ class MaxBinUtil:
 
         log('Processing reads object list: {}'.format(reads_list))
 
-        result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        result_directory = os.path.join(self.scratch, 'result_'+str(uuid.uuid4()))
         self._mkdir_p(result_directory)
         result_file = os.path.join(result_directory, 'reads_list_file.txt')
 
@@ -187,7 +187,7 @@ class MaxBinUtil:
         log('Start packing result files')
         output_files = list()
 
-        output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        output_directory = os.path.join(self.scratch, 'output_'+str(uuid.uuid4()))
         self._mkdir_p(output_directory)
         result_file = os.path.join(output_directory, 'maxbin_result.zip')
         report_file = None
@@ -223,7 +223,7 @@ class MaxBinUtil:
         log('Start generating html report')
         html_report = list()
 
-        output_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        output_directory = os.path.join(self.scratch, 'output_'+str(uuid.uuid4()))
         self._mkdir_p(output_directory)
         result_file_path = os.path.join(output_directory, 'report.html')
         file_list = os.listdir(result_directory)
@@ -396,7 +396,7 @@ class MaxBinUtil:
                 if file not in existing_files:
                     new_files.append(file)
 
-        result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
+        result_directory = os.path.join(self.scratch, 'result_'+str(uuid.uuid4()))
         self._mkdir_p(result_directory)
 
         for file in new_files:
@@ -405,6 +405,7 @@ class MaxBinUtil:
         log('Saved result files to: {}'.format(result_directory))
         log('Generated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
 
+        binned_contig_obj_ref = None
         generate_binned_contig_param = {
             'file_directory': result_directory,
             'assembly_ref': params.get('assembly_ref'),

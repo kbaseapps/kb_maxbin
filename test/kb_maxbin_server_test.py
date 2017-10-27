@@ -248,7 +248,8 @@ class kb_maxbinTest(unittest.TestCase):
 
         result_file_file_directory = 'MaxBin_result'
         result_file_path = os.path.join(self.scratch, result_file_file_directory)
-        os.makedirs(result_file_path)
+        if not os.path.exists(result_file_path):
+            os.makedirs(result_file_path)
 
         for item in os.listdir(os.path.join("data", "MaxBin_Result_Sample")):
             shutil.copy(os.path.join("data", "MaxBin_Result_Sample", item),
