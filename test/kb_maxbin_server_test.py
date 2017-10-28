@@ -166,7 +166,7 @@ class kb_maxbinTest(unittest.TestCase):
                     ValueError, '"reads_list" parameter is required, but missing'):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
-    def test_MaxBinUtil_stage_file(self):
+    def xtest_MaxBinUtil_stage_file(self):
 
         contig_filename = '20x.scaffold.gz'
         contig_path = os.path.join(self.scratch, contig_filename)

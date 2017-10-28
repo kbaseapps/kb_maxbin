@@ -69,38 +69,6 @@ class MaxBinUtil:
             error_msg += 'Exit Code: {}\nOutput:\n{}'.format(exitCode, output)
             raise ValueError(error_msg)
 
-    def _stage_file(self, file):
-        """
-        _stage_file: download local file/ shock file to scratch area
-        """
-
-        log('Processing file: {}'.format(file))
-
-        input_directory = os.path.join(self.scratch, str(uuid.uuid4()))
-        self._mkdir_p(input_directory)
-
-        if file.get('path'):
-            # handle local file
-            local_file_path = file['path']
-            file_path = os.path.join(input_directory, os.path.basename(local_file_path))
-            log('Moving file from {} to {}'.format(local_file_path, file_path))
-            shutil.copy2(local_file_path, file_path)
-
-        if file.get('shock_id'):
-            # handle shock file
-            log('Downloading file from SHOCK node: {}-{}'.format(self.shock_url,
-                                                                 file['shock_id']))
-            sys.stdout.flush()
-            file_name = self.dfu.shock_to_file({'file_path': input_directory,
-                                                'shock_id': file['shock_id']
-                                                })['node_file_name']
-            file_path = os.path.join(input_directory, file_name)
-
-        sys.stdout.flush()
-        file_path = self.dfu.unpack_file({'file_path': file_path})['file_path']
-
-        return file_path
-
     def _stage_reads_list_file(self, reads_list):
         """
         _stage_reads_list_file: download fastq file associated to reads to scratch area
@@ -115,13 +83,13 @@ class MaxBinUtil:
 
         result_file_path = []
 
-        for reads_ref in reads_list:
-            reads_shock_id = self.ru.export_reads({'input_ref': reads_ref})['shock_id']
-            file_path = self._stage_file({'shock_id': reads_shock_id})
-            result_files = os.listdir(os.path.dirname(file_path))
-            for file in result_files:
-                if file.endswith('fastq'):
-                    result_file_path.append(os.path.join(os.path.dirname(file_path), file))
+        reads = self.ru.download_reads({'read_libraries': reads_list, 'interleaved': 'true'})['files']
+
+        for read_obj in reads_list:
+            files = reads[read_obj]['files']
+            result_file_path.append(files['fwd'])
+            if 'rev' in files and files['rev'] is not None:
+                result_file_path.append(files['rev'])
 
         log('Saving reads file path(s) to: {}'.format(result_file))
         with open(result_file, 'w') as file_handler:
