@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name     : MaxBin2 Contig Binning - v2.2.4
+name     : MaxBin2 Contig Binning - v2.2.3
 subtitle : Bin assembled metagenomic contigs
 tooltip  : Group assembled metagenomic contigs into lineages (Binning) using depth-of-coverage, nucleotide composition, and marker genes
 

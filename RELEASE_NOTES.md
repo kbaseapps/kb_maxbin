@@ -1,4 +1,3 @@
-### Version 1.1.0
+### Version 1.0.2
 __Changes__
-- updated to MaxBin2.2.4
-- added KBaseAssembly.SingleEndLibrary and KBaseAssembly.PairedEndLibrary as valid input types
+- added KBaseAssembly.SingleEndLibrary and KBaseAssembly.PairedEndLibrary as valid input types for backwards compatibility

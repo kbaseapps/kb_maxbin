@@ -84,6 +84,22 @@ class kb_maxbinTest(unittest.TestCase):
         }
         cls.se_reads_ref = cls.ru.upload_reads(se_reads_params)['obj_ref']
 
+        # KBaseAssembly.SingleEndLibrary for testing back compatibility
+        se_reads_obj = cls.dfu.get_objects({'object_refs': [cls.se_reads_ref]})['data'][0]['data']
+        KBA_se_reads_obj_data = { 'handle': se_reads_obj['lib']['file'] }
+        KBA_se_reads_obj_info = cls.dfu.save_objects (
+            {'id': cls.ws_info[0],
+             'objects': [{'type': 'KBaseAssembly.SingleEndLibrary',
+                          'data': KBA_se_reads_obj_data,
+                          'name': 'test.KBA_single_reads',
+                          'meta': {},
+                          'provenance':[{'service':'kb_maxbin', 'method': 'test_kb_maxbin'}]
+                      }]})['info'][0]
+        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
+        cls.KBA_se_reads_obj_ref = str(KBA_se_reads_obj_info[WSID_I]) + '/' \
+                                   + str(KBA_se_reads_obj_info[OBJID_I]) + '/' \
+                                   + str(KBA_se_reads_obj_info[VERSION_I])
+
         # building PairedEndLibrary
         fwd_reads_filename = 'small.forward.fq'
         fwd_reads_path = os.path.join(cls.scratch, fwd_reads_filename)
@@ -100,6 +116,24 @@ class kb_maxbinTest(unittest.TestCase):
             'name': 'MyPairedEndLibrary'
         }
         cls.pe_reads_ref = cls.ru.upload_reads(pe_reads_params)['obj_ref']
+
+        # KBaseAssembly.PairedEndLibrary for testing back compatibility
+        pe_reads_obj = cls.dfu.get_objects({'object_refs': [cls.pe_reads_ref]})['data'][0]['data']
+        KBA_pe_reads_obj_data = { 'handle_1': pe_reads_obj['lib1']['file'],
+                                  'handle_2': pe_reads_obj['lib2']['file']
+        }
+        KBA_pe_reads_obj_info = cls.dfu.save_objects (
+            {'id': cls.ws_info[0],
+             'objects': [{'type': 'KBaseAssembly.PairedEndLibrary',
+                          'data': KBA_pe_reads_obj_data,
+                          'name': 'test.KBA_paired_reads',
+                          'meta': {},
+                          'provenance':[{'service':'kb_maxbin', 'method': 'test_kb_maxbin'}]
+                      }]})['info'][0]
+        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
+        cls.KBA_pe_reads_obj_ref = str(KBA_pe_reads_obj_info[WSID_I]) + '/' \
+                                   + str(KBA_pe_reads_obj_info[OBJID_I]) + '/' \
+                                   + str(KBA_pe_reads_obj_info[VERSION_I])
 
         # building Assembly
         assembly_filename = '20x.fna'
@@ -317,7 +351,7 @@ class kb_maxbinTest(unittest.TestCase):
 
         input_params = {
             'assembly_ref': self.assembly_ref,
-            'binned_contig_name': 'out_header',
+            'binned_contig_name': 'out_header'+'single',
             'workspace_name': self.getWsName(),
             'reads_list': [self.pe_reads_ref],
             'thread': 1,
@@ -338,7 +372,49 @@ class kb_maxbinTest(unittest.TestCase):
 
         input_params = {
             'assembly_ref': self.assembly_ref,
-            'binned_contig_name': 'out_header',
+            'binned_contig_name': 'out_header'+'multi',
+            'workspace_name': self.getWsName(),
+            'reads_list': [self.pe_reads_ref, self.pe_reads_ref, self.se_reads_ref],
+            'thread': 4,
+            'prob_threshold': 0.7,
+            'markerset': 40,
+            'min_contig_length': 1500,
+            'plotmarker': 1
+        }
+
+        result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        self.assertTrue('binned_contig_obj_ref' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
+
+    def test_run_maxbin_single_reads_KBaseAssembly_reads(self):
+
+        input_params = {
+            'assembly_ref': self.assembly_ref,
+            'binned_contig_name': 'out_header'+'single'+'KBA',
+            'workspace_name': self.getWsName(),
+            'reads_list': [self.KBA_pe_reads_ref],
+            'thread': 1,
+            'prob_threshold': 0.5,
+            'markerset': 170,
+            'min_contig_length': 2000,
+            'plotmarker': 1
+        }
+
+        result = self.getImpl().run_max_bin(self.getContext(), input_params)[0]
+
+        self.assertTrue('result_directory' in result)
+        self.assertTrue('binned_contig_obj_ref' in result)
+        self.assertTrue('report_name' in result)
+        self.assertTrue('report_ref' in result)
+
+    def test_run_maxbin_multi_reads_KBaseAssembly_reads(self):
+
+        input_params = {
+            'assembly_ref': self.assembly_ref,
+            'binned_contig_name': 'out_header'+'multi'+'KBA',
             'workspace_name': self.getWsName(),
             'reads_list': [self.pe_reads_ref, self.pe_reads_ref, self.se_reads_ref],
             'thread': 4,
