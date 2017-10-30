@@ -24,7 +24,7 @@ class kb_maxbin:
     ######################################### noqa
     VERSION = "1.0.2"
     GIT_URL = "https://github.com/dcchivian/kb_maxbin"
-    GIT_COMMIT_HASH = "646b45b84cc06d261c29a30c8d6ddc7d27ac2b31"
+    GIT_COMMIT_HASH = "9bf35af90f7b70260f5f613205261f9776d64e81"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
