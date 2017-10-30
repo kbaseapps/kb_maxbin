@@ -1,3 +1,6 @@
-### Version 1.0.2
-__Changes__
-- added KBaseAssembly.SingleEndLibrary and KBaseAssembly.PairedEndLibrary as valid input types for backwards compatibility
+### Version 1.0.1
+- Switch from export_reads to download_reads to avoid extra data movement and Speed up execution.
+
+### Version 1.0.0
+- Initial release
+
