@@ -8,8 +8,8 @@ service-language:
     python
 
 module-version:
-    1.1.0
+    1.0.1
 
 owners:
-    [dylan, tgu2]
+    [dylan, tgu2, scanon]
 

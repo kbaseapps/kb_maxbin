@@ -14,17 +14,15 @@ RUN apt-get update
 RUN pip install coverage
 
 # update security libraries in the base image
-RUN pip install cffi --upgrade \
-    && pip install pyopenssl --upgrade \
+RUN pip install cffi pyopenssl cryptography==2.0.3 --upgrade \
     && pip install ndg-httpsclient --upgrade \
     && pip install pyasn1 --upgrade \
     && pip install requests --upgrade \
     && pip install 'requests[security]' --upgrade
 
 # To install all the dependencies
-RUN apt-get install -y build-essential wget make curl unzip python
-RUN apt-get install -y r-base
-RUN apt-get install -y r-cran-gplots
+RUN apt-get update && apt-get install -y build-essential wget make curl unzip python && \
+    apt-get install -y r-base r-cran-gplots
 
 # To download the Maxbin software and untar it
 RUN cd /kb/dev_container/modules && \
