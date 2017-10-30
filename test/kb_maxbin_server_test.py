@@ -94,11 +94,11 @@ class kb_maxbinTest(unittest.TestCase):
                           'name': 'test.KBA_single_reads',
                           'meta': {},
                           'provenance':[{'service':'kb_maxbin', 'method': 'test_kb_maxbin'}]
-                      }]})['info'][0]
+                      }]})[0]
         [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
-        cls.KBA_se_reads_obj_ref = str(KBA_se_reads_obj_info[WSID_I]) + '/' \
-                                   + str(KBA_se_reads_obj_info[OBJID_I]) + '/' \
-                                   + str(KBA_se_reads_obj_info[VERSION_I])
+        cls.KBA_se_reads_ref = str(KBA_se_reads_obj_info[WSID_I]) + '/' \
+                               + str(KBA_se_reads_obj_info[OBJID_I]) + '/' \
+                               + str(KBA_se_reads_obj_info[VERSION_I])
 
         # building PairedEndLibrary
         fwd_reads_filename = 'small.forward.fq'
@@ -120,8 +120,13 @@ class kb_maxbinTest(unittest.TestCase):
         # KBaseAssembly.PairedEndLibrary for testing back compatibility
         pe_reads_obj = cls.dfu.get_objects({'object_refs': [cls.pe_reads_ref]})['data'][0]['data']
         KBA_pe_reads_obj_data = { 'handle_1': pe_reads_obj['lib1']['file'],
-                                  'handle_2': pe_reads_obj['lib2']['file']
+                                  'insert_size_mean': pe_reads_obj['insert_size_mean'],
+                                  'insert_size_std_dev': pe_reads_obj['insert_size_std_dev'],
+                                  'interleaved': pe_reads_obj['interleaved'],
+                                  'read_orientation_outward': pe_reads_obj['read_orientation_outward']
         }
+        if 'lib2' in pe_reads_obj:
+            KBA_pe_reads_obj_data['handle_2'] = pe_reads_obj['lib2']['file']
         KBA_pe_reads_obj_info = cls.dfu.save_objects (
             {'id': cls.ws_info[0],
              'objects': [{'type': 'KBaseAssembly.PairedEndLibrary',
@@ -129,11 +134,11 @@ class kb_maxbinTest(unittest.TestCase):
                           'name': 'test.KBA_paired_reads',
                           'meta': {},
                           'provenance':[{'service':'kb_maxbin', 'method': 'test_kb_maxbin'}]
-                      }]})['info'][0]
+                      }]})[0]
         [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
-        cls.KBA_pe_reads_obj_ref = str(KBA_pe_reads_obj_info[WSID_I]) + '/' \
-                                   + str(KBA_pe_reads_obj_info[OBJID_I]) + '/' \
-                                   + str(KBA_pe_reads_obj_info[VERSION_I])
+        cls.KBA_pe_reads_ref = str(KBA_pe_reads_obj_info[WSID_I]) + '/' \
+                               + str(KBA_pe_reads_obj_info[OBJID_I]) + '/' \
+                               + str(KBA_pe_reads_obj_info[VERSION_I])
 
         # building Assembly
         assembly_filename = '20x.fna'
@@ -324,8 +329,32 @@ class kb_maxbinTest(unittest.TestCase):
         for item in result_file_list:
             self.assertRegexpMatches(item, r'.*\.single\.fastq.*')
 
+        # test KBaseAssembly SingleEndLibrary
+        reads_list = [self.KBA_se_reads_ref, self.KBA_se_reads_ref]
+
+        reads_list_file = self.maxbin_runner._stage_reads_list_file(reads_list)
+
+        with open(reads_list_file) as file:
+            result_file_list = file.readlines()
+
+        self.assertEquals(len(result_file_list), len(reads_list))
+        for item in result_file_list:
+            self.assertRegexpMatches(item, r'.*\.single\.fastq.*')
+
         # test PairedEndLibrary
         reads_list = [self.pe_reads_ref, self.pe_reads_ref]
+
+        reads_list_file = self.maxbin_runner._stage_reads_list_file(reads_list)
+
+        with open(reads_list_file) as file:
+            result_file_list = file.readlines()
+
+        self.assertEquals(len(result_file_list), len(reads_list))
+        for item in result_file_list:
+            self.assertRegexpMatches(item, r'.*\.inter\.fastq.*')
+
+        # test KBaseAssembly PairedEndLibrary
+        reads_list = [self.KBA_pe_reads_ref, self.KBA_pe_reads_ref]
 
         reads_list_file = self.maxbin_runner._stage_reads_list_file(reads_list)
 
@@ -416,7 +445,7 @@ class kb_maxbinTest(unittest.TestCase):
             'assembly_ref': self.assembly_ref,
             'binned_contig_name': 'out_header'+'multi'+'KBA',
             'workspace_name': self.getWsName(),
-            'reads_list': [self.pe_reads_ref, self.pe_reads_ref, self.se_reads_ref],
+            'reads_list': [self.KBA_pe_reads_ref, self.KBA_pe_reads_ref, self.KBA_se_reads_ref],
             'thread': 4,
             'prob_threshold': 0.7,
             'markerset': 40,
