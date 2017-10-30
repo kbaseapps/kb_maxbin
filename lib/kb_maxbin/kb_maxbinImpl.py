@@ -22,9 +22,9 @@ class kb_maxbin:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "1.0.1"
-    GIT_URL = "https://github.com/kbaseapps/kb_maxbin.git"
-    GIT_COMMIT_HASH = ""
+    VERSION = "1.1.0"
+    GIT_URL = "https://github.com/dcchivian/kb_maxbin"
+    GIT_COMMIT_HASH = "f59c04d9c437ec5edb83057e386f6bbbf62d2b50"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
