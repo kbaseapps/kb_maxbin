@@ -86,16 +86,17 @@ class kb_maxbinTest(unittest.TestCase):
 
         # KBaseAssembly.SingleEndLibrary for testing back compatibility
         se_reads_obj = cls.dfu.get_objects({'object_refs': [cls.se_reads_ref]})['data'][0]['data']
-        KBA_se_reads_obj_data = { 'handle': se_reads_obj['lib']['file'] }
-        KBA_se_reads_obj_info = cls.dfu.save_objects (
+        KBA_se_reads_obj_data = {'handle': se_reads_obj['lib']['file']}
+        KBA_se_reads_obj_info = cls.dfu.save_objects(
             {'id': cls.ws_info[0],
              'objects': [{'type': 'KBaseAssembly.SingleEndLibrary',
                           'data': KBA_se_reads_obj_data,
                           'name': 'test.KBA_single_reads',
                           'meta': {},
-                          'provenance':[{'service':'kb_maxbin', 'method': 'test_kb_maxbin'}]
-                      }]})[0]
-        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
+                          'provenance': [{'service': 'kb_maxbin', 'method': 'test_kb_maxbin'}]
+                          }]})[0]
+        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I,
+         CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
         cls.KBA_se_reads_ref = str(KBA_se_reads_obj_info[WSID_I]) + '/' \
                                + str(KBA_se_reads_obj_info[OBJID_I]) + '/' \
                                + str(KBA_se_reads_obj_info[VERSION_I])
@@ -119,23 +120,23 @@ class kb_maxbinTest(unittest.TestCase):
 
         # KBaseAssembly.PairedEndLibrary for testing back compatibility
         pe_reads_obj = cls.dfu.get_objects({'object_refs': [cls.pe_reads_ref]})['data'][0]['data']
-        KBA_pe_reads_obj_data = { 'handle_1': pe_reads_obj['lib1']['file'],
-                                  'insert_size_mean': pe_reads_obj['insert_size_mean'],
-                                  'insert_size_std_dev': pe_reads_obj['insert_size_std_dev'],
-                                  'interleaved': pe_reads_obj['interleaved'],
-                                  'read_orientation_outward': pe_reads_obj['read_orientation_outward']
-        }
+        KBA_pe_reads_obj_data = {'handle_1': pe_reads_obj['lib1']['file'],
+                                 'insert_size_mean': pe_reads_obj['insert_size_mean'],
+                                 'insert_size_std_dev': pe_reads_obj['insert_size_std_dev'],
+                                 'interleaved': pe_reads_obj['interleaved'],
+                                 'read_orientation_outward': pe_reads_obj['read_orientation_outward']}
         if 'lib2' in pe_reads_obj:
             KBA_pe_reads_obj_data['handle_2'] = pe_reads_obj['lib2']['file']
-        KBA_pe_reads_obj_info = cls.dfu.save_objects (
+        KBA_pe_reads_obj_info = cls.dfu.save_objects(
             {'id': cls.ws_info[0],
              'objects': [{'type': 'KBaseAssembly.PairedEndLibrary',
                           'data': KBA_pe_reads_obj_data,
                           'name': 'test.KBA_paired_reads',
                           'meta': {},
-                          'provenance':[{'service':'kb_maxbin', 'method': 'test_kb_maxbin'}]
-                      }]})[0]
-        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
+                          'provenance': [{'service': 'kb_maxbin', 'method': 'test_kb_maxbin'}]
+                          }]})[0]
+        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I, WORKSPACE_I,
+         CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
         cls.KBA_pe_reads_ref = str(KBA_pe_reads_obj_info[WSID_I]) + '/' \
                                + str(KBA_pe_reads_obj_info[OBJID_I]) + '/' \
                                + str(KBA_pe_reads_obj_info[VERSION_I])
