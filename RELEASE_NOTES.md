@@ -1,3 +1,8 @@
+
+### Version 1.0.3
+- upgrading maxbin to 2.2.4
+- saving generated files to scratch area
+
 ### Version 1.0.2
 - Added KBaseAssembly.SingleEndFile and KBaseAssembly.PairedEndFile as viable input types to allow for backwards compatibility with old KBase read data objects
 

@@ -5,7 +5,6 @@ import os
 import uuid
 import errno
 import subprocess
-import shutil
 import sys
 import zipfile
 
@@ -83,7 +82,8 @@ class MaxBinUtil:
 
         result_file_path = []
 
-        reads = self.ru.download_reads({'read_libraries': reads_list, 'interleaved': 'true'})['files']
+        reads = self.ru.download_reads({'read_libraries': reads_list,
+                                        'interleaved': 'true'})['files']
 
         for read_obj in reads_list:
             files = reads[read_obj]['files']
@@ -340,7 +340,6 @@ class MaxBinUtil:
             'params:\n{}'.format(json.dumps(params, indent=1)))
 
         self._validate_run_maxbin_params(params)
-        #params['out_header'] = params.get('binned_contig_name')
         params['out_header'] = 'Bin'
 
         contig_file = self._get_contig_file(params.get('assembly_ref'))
@@ -349,26 +348,17 @@ class MaxBinUtil:
         reads_list_file = self._stage_reads_list_file(params.get('reads_list'))
         params['reads_list_file'] = reads_list_file
 
-        command = self._generate_command(params)
-
-        existing_files = []
-        for subdir, dirs, files in os.walk('./'):
-            for file in files:
-                existing_files.append(file)
-
-        self._run_command(command)
-
-        new_files = []
-        for subdir, dirs, files in os.walk('./'):
-            for file in files:
-                if file not in existing_files:
-                    new_files.append(file)
-
         result_directory = os.path.join(self.scratch, str(uuid.uuid4()))
         self._mkdir_p(result_directory)
 
-        for file in new_files:
-            shutil.copy(file, result_directory)
+        command = self._generate_command(params)
+
+        cwd = os.getcwd()
+        log('changing working dir to {}'.format(result_directory))
+        os.chdir(result_directory)
+        self._run_command(command)
+        os.chdir(cwd)
+        log('changing working dir to {}'.format(cwd))
 
         log('Saved result files to: {}'.format(result_directory))
         log('Generated files:\n{}'.format('\n'.join(os.listdir(result_directory))))
