@@ -19,7 +19,7 @@
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types" : ["KBaseGenomes.ContigSet", "KBaseGenomeAnnotations.Assembly"]
+                "valid_ws_types" : ["KBaseGenomeAnnotations.Assembly"]
             }
         },
         {  
