@@ -73,13 +73,6 @@ description : |
     <p>MaxBin2 uses nucleotide composition information, source strain abundance (measured by depth-of-coverage by aligning the reads to the contigs), and phylogenetic marker genes to perform binning through an Expectation-Maximization algorithm.</p>
     <p><hr></p>
 
-    <p>Maxbin2 from <a href="http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt">http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt</a></p>
-    <p><i>Please cite:</i></p>
-       <ul>
-       <li>Wu YW, Simmons BA, Singer SW. (2016) MaxBin 2.0: an automated binning algorithm to recover genomes from multiple metagenomic datasets. <a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btv638">Bioinformatics. 2016 Feb 15;32(4):605-7.</a> doi:10.1093/bioinformatics/btv638
-       <li>Wu YW, Tang YH, Tringe SG, Simmons BA, Singer SW. (2014) MaxBin: an automated binning method to recover individual genomes from metagenomes using an expectation-maximization algorithm. <a href="https://microbiomejournal.biomedcentral.com/articles/10.1186/2049-2618-2-26">Microbiome. 2014 Aug 1;2:26.</a> doi: 10.1186/2049-2618-2-26
-      </ul>
-    </p>
     <p><hr></p>
     <p><i>Implemented for KBase by <a href="mailto:tianhaogu2012@u.northwestern.edu">Tianhao Gu (tianhaogu2012@u.northwestern.edu)</a>, <a href="mailto:WJRiehl@lbl.gov">William J Riehl (WJRiehl@lbl.gov)</a>, and <a href="mailto:DCChivian@lbl.gov">Dylan Chivian (DCChivian@lbl.gov)</a></i></p>
     <p><hr></p>
@@ -99,18 +92,24 @@ description : |
     <p><b><i>Output Bin Summary Report:</i></b> A table with the characteristics of each of the bins, including the bin name, its depth of coverage (abundance), the esitimated completeness (using the phylogenetic marker genes found in each bin), an estimate of the genome size (combining the completeness estimation with the observed contig lengths for that bin), and the GC % found in the binned contigs.</p>
     <p><b><i>Downloadable files:</i></b> The enitre output of the MaxBin2 run may be downloaded as a zip file.</p>
 
-publications:
+publications :
     -
         pmid : 26515820
-        display-text : |
-            'Wu YW, Simmons BA, Singer SW. (2016) MaxBin 2.0: an automated binning algorithm to recover genomes from multiple metagenomic datasets. Bioinformatics. 2016 Feb 15;32(4):605-7. doi:10.1093/bioinformatics/btv638'
-        link: https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btv638
+        display-text: |
+            Wu Y-W, Simmons BA, Singer SW. MaxBin 2.0: an automated binning algorithm to recover genomes from multiple metagenomic datasets. Bioinformatics. 2016;32: 605–607. doi:10.1093/bioinformatics/btv638 (2) 1. Wu Y-W, Tang Y-H, Tringe SG, Simmons BA, Singer SW. MaxBin: an automated binning method to recover individual genomes from metagenomes using an expectation-maximization algorithm. Microbiome. 2014;2: 26. doi:10.1186/2049-2618-2-26
+        link:  https://academic.oup.com/bioinformatics/article/32/4/605/1744462
     -
         pmid : 25136443
-        display-text : |
-            'Wu YW, Tang YH, Tringe SG, Simmons BA, Singer SW. (2014) MaxBin: an automated binning method to recover individual genomes from metagenomes using an expectation-maximization algorithm. Microbiome. 2014 Aug 1;2:26. doi: 10.1186/2049-2618-2-26'
+        display-text: |
+            Wu Y-W, Tang Y-H, Tringe SG, Simmons BA, Singer SW. MaxBin: an automated binning method to recover individual genomes from metagenomes using an expectation-maximization algorithm. Microbiome. 2014;2: 26. doi:10.1186/2049-2618-2-26
         link: https://microbiomejournal.biomedcentral.com/articles/10.1186/2049-2618-2-26
+
     -
+        display-text: |
+            Maxbin source:
         link: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
+
     -
+        display-text: |
+            Maxbin2 source:
         link: https://sourceforge.net/projects/maxbin2/
