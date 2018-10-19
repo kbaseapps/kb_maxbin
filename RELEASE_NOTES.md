@@ -1,3 +1,6 @@
+### Version 1.0.5
+- updated citations to PLOS format
+- removed duplicate citations
 
 ### Version 1.0.3
 - upgrading maxbin to 2.2.4
@@ -11,4 +14,3 @@
 
 ### Version 1.0.0
 - Initial release
-
