@@ -1,3 +1,6 @@
+### Version 1.1.0
+- Update to Python 3
+
 ### Version 1.0.5
 - updated citations to PLOS format
 - removed duplicate citations
