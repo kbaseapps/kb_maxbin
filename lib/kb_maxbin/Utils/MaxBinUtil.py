@@ -1,19 +1,19 @@
-
-import time
+import errno
 import json
 import os
-import uuid
-import errno
 import subprocess
 import sys
+import time
+import uuid
 import zipfile
+
 from Bio import SeqIO
 
-from DataFileUtil.DataFileUtilClient import DataFileUtil
-from KBaseReport.KBaseReportClient import KBaseReport
-from ReadsUtils.ReadsUtilsClient import ReadsUtils
-from AssemblyUtil.AssemblyUtilClient import AssemblyUtil
-from MetagenomeUtils.MetagenomeUtilsClient import MetagenomeUtils
+from installed_clients.AssemblyUtilClient import AssemblyUtil
+from installed_clients.DataFileUtilClient import DataFileUtil
+from installed_clients.KBaseReportClient import KBaseReport
+from installed_clients.MetagenomeUtilsClient import MetagenomeUtils
+from installed_clients.ReadsUtilsClient import ReadsUtils
 
 
 def log(message, prefix_newline=False):

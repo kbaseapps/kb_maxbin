@@ -12,10 +12,9 @@ from __future__ import print_function
 try:
     # baseclient and this client are in a package
     from .baseclient import BaseClient as _BaseClient  # @UnusedImport
-except:
+except ImportError:
     # no they aren't
     from baseclient import BaseClient as _BaseClient  # @Reimport
-import time
 
 
 class MetagenomeUtils(object):
@@ -24,7 +23,7 @@ class MetagenomeUtils(object):
             self, url=None, timeout=30 * 60, user_id=None,
             password=None, token=None, ignore_authrc=False,
             trust_all_ssl_certificates=False,
-            auth_svc='https://kbase.us/services/authorization/Sessions/Login',
+            auth_svc='https://ci.kbase.us/services/auth/api/legacy/KBase/Sessions/Login',
             service_ver='release',
             async_job_check_time_ms=100, async_job_check_time_scale_percent=150, 
             async_job_check_max_time_ms=300000):
@@ -39,14 +38,6 @@ class MetagenomeUtils(object):
             async_job_check_time_ms=async_job_check_time_ms,
             async_job_check_time_scale_percent=async_job_check_time_scale_percent,
             async_job_check_max_time_ms=async_job_check_max_time_ms)
-
-    def _check_job(self, job_id):
-        return self._client._check_job('MetagenomeUtils', job_id)
-
-    def _file_to_binned_contigs_submit(self, params, context=None):
-        return self._client._submit_job(
-             'MetagenomeUtils.file_to_binned_contigs', [params],
-             self._service_ver, context)
 
     def file_to_binned_contigs(self, params, context=None):
         """
@@ -72,22 +63,8 @@ class MetagenomeUtils(object):
            parameter "binned_contig_obj_ref" of type "obj_ref" (An X/Y/Z
            style reference)
         """
-        job_id = self._file_to_binned_contigs_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _binned_contigs_to_file_submit(self, params, context=None):
-        return self._client._submit_job(
-             'MetagenomeUtils.binned_contigs_to_file', [params],
-             self._service_ver, context)
+        return self._client.run_job('MetagenomeUtils.file_to_binned_contigs',
+                                    [params], self._service_ver, context)
 
     def binned_contigs_to_file(self, params, context=None):
         """
@@ -109,22 +86,50 @@ class MetagenomeUtils(object):
            files) -> structure: parameter "shock_id" of String, parameter
            "bin_file_directory" of String
         """
-        job_id = self._binned_contigs_to_file_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
+        return self._client.run_job('MetagenomeUtils.binned_contigs_to_file',
+                                    [params], self._service_ver, context)
 
-    def _extract_binned_contigs_as_assembly_submit(self, params, context=None):
-        return self._client._submit_job(
-             'MetagenomeUtils.extract_binned_contigs_as_assembly', [params],
-             self._service_ver, context)
+    def export_binned_contigs_as_excel(self, params, context=None):
+        """
+        export_binned_contigs_as_excel: Convert BinnedContig object to an excel file and pack it to shock
+        required params:
+        input_ref: BinnedContig object reference
+        optional params:
+        save_to_shock: saving result bin files to shock. default to True
+        return params:
+        shock_id: saved packed file shock id (None if save_to_shock is set to False)
+        bin_file_directory: directory that contains all bin files
+        :param params: instance of type "ExportParams" (input_ref:
+           BinnedContig object reference optional params: save_to_shock:
+           saving result bin files to shock. default to True) -> structure:
+           parameter "input_ref" of String, parameter "save_to_shock" of type
+           "boolean" (A boolean - 0 for false, 1 for true. @range (0, 1))
+        :returns: instance of type "ExportOutput" (shock_id: saved packed
+           file shock id bin_file_directory: directory that contains all bin
+           files) -> structure: parameter "shock_id" of String, parameter
+           "bin_file_directory" of String
+        """
+        return self._client.run_job('MetagenomeUtils.export_binned_contigs_as_excel',
+                                    [params], self._service_ver, context)
+
+    def import_excel_as_binned_contigs(self, params, context=None):
+        """
+        import_excel_as_binned_contigs: Import an excel file as BinnedContigs
+        required params:
+        shock_id: Excel file stored in shock
+        workspace_name: the name of the workspace object gets saved to
+        optional params:
+        binned_contigs_name: saved BinnedContig name. 
+                             Auto append timestamp from excel if not given.
+        :param params: instance of type "ImportExcelParams" -> structure:
+           parameter "shock_id" of String, parameter "workspace_name" of
+           String, parameter "binned_contigs_name" of String
+        :returns: instance of type "ImportExcelOutput" -> structure:
+           parameter "report_name" of String, parameter "report_ref" of
+           String, parameter "binned_contigs_ref" of String
+        """
+        return self._client.run_job('MetagenomeUtils.import_excel_as_binned_contigs',
+                                    [params], self._service_ver, context)
 
     def extract_binned_contigs_as_assembly(self, params, context=None):
         """
@@ -133,7 +138,7 @@ class MetagenomeUtils(object):
         binned_contig_obj_ref: BinnedContig object reference
         extracted_assemblies: a list of:
               bin_id: target bin id to be extracted
-              output_assembly_name: output assembly object name
+              assembly_suffix: suffix appended to assembly object name
         workspace_name: the name of the workspace it gets saved to
         return params:
         assembly_ref_list: list of generated result Assembly object reference
@@ -141,38 +146,24 @@ class MetagenomeUtils(object):
         report_ref: report reference generated by KBaseReport
         :param params: instance of type "ExtractBinAsAssemblyParams"
            (binned_contig_obj_ref: BinnedContig object reference
-           extracted_assemblies: a list of: bin_id: target bin id to be
-           extracted output_assembly_name: output assembly object name
+           extracted_assemblies: a list of dictionaries: bin_id: target bin
+           id to be extracted assembly_suffix: suffix appended to assembly
+           object name assembly_set_name:  name for created assembly set
            workspace_name: the name of the workspace it gets saved to) ->
            structure: parameter "binned_contig_obj_ref" of type "obj_ref" (An
-           X/Y/Z style reference), parameter "bin_id" of String, parameter
-           "output_assembly_name" of String, parameter "extracted_assemblies"
-           of list of mapping from String to String, parameter
-           "workspace_name" of String
+           X/Y/Z style reference), parameter "extracted_assemblies" of
+           String, parameter "assembly_suffix" of String, parameter
+           "assembly_set_name" of String, parameter "workspace_name" of String
         :returns: instance of type "ExtractBinAsAssemblyResult"
            (assembly_ref_list: list of generated Assembly object reference
            report_name: report name generated by KBaseReport report_ref:
            report reference generated by KBaseReport) -> structure: parameter
            "assembly_ref_list" of list of type "obj_ref" (An X/Y/Z style
            reference), parameter "report_name" of String, parameter
-           "report_ref" of String
+           "report_ref" of String, parameter "assembly_set_ref" of String
         """
-        job_id = self._extract_binned_contigs_as_assembly_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _remove_bins_from_binned_contig_submit(self, params, context=None):
-        return self._client._submit_job(
-             'MetagenomeUtils.remove_bins_from_binned_contig', [params],
-             self._service_ver, context)
+        return self._client.run_job('MetagenomeUtils.extract_binned_contigs_as_assembly',
+                                    [params], self._service_ver, context)
 
     def remove_bins_from_binned_contig(self, params, context=None):
         """
@@ -200,22 +191,8 @@ class MetagenomeUtils(object):
            "new_binned_contig_ref" of type "obj_ref" (An X/Y/Z style
            reference)
         """
-        job_id = self._remove_bins_from_binned_contig_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _merge_bins_from_binned_contig_submit(self, params, context=None):
-        return self._client._submit_job(
-             'MetagenomeUtils.merge_bins_from_binned_contig', [params],
-             self._service_ver, context)
+        return self._client.run_job('MetagenomeUtils.remove_bins_from_binned_contig',
+                                    [params], self._service_ver, context)
 
     def merge_bins_from_binned_contig(self, params, context=None):
         """
@@ -245,22 +222,8 @@ class MetagenomeUtils(object):
            parameter "new_binned_contig_ref" of type "obj_ref" (An X/Y/Z
            style reference)
         """
-        job_id = self._merge_bins_from_binned_contig_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
-
-    def _edit_bins_from_binned_contig_submit(self, params, context=None):
-        return self._client._submit_job(
-             'MetagenomeUtils.edit_bins_from_binned_contig', [params],
-             self._service_ver, context)
+        return self._client.run_job('MetagenomeUtils.merge_bins_from_binned_contig',
+                                    [params], self._service_ver, context)
 
     def edit_bins_from_binned_contig(self, params, context=None):
         """
@@ -300,28 +263,9 @@ class MetagenomeUtils(object):
            reference), parameter "report_name" of String, parameter
            "report_ref" of String
         """
-        job_id = self._edit_bins_from_binned_contig_submit(params, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
+        return self._client.run_job('MetagenomeUtils.edit_bins_from_binned_contig',
+                                    [params], self._service_ver, context)
 
     def status(self, context=None):
-        job_id = self._client._submit_job('MetagenomeUtils.status', 
-            [], self._service_ver, context)
-        async_job_check_time = self._client.async_job_check_time
-        while True:
-            time.sleep(async_job_check_time)
-            async_job_check_time = (async_job_check_time *
-                self._client.async_job_check_time_scale_percent / 100.0)
-            if async_job_check_time > self._client.async_job_check_max_time:
-                async_job_check_time = self._client.async_job_check_max_time
-            job_state = self._check_job(job_id)
-            if job_state['finished']:
-                return job_state['result'][0]
+        return self._client.run_job('MetagenomeUtils.status',
+                                    [], self._service_ver, context)
