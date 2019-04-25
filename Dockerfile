@@ -1,4 +1,4 @@
-FROM kbase/kbase:sdkbase2.latest
+FROM kbase/sdkbase2:python
 MAINTAINER KBase Developer
 # -----------------------------------------
 # In this section, you can install any system dependencies required
@@ -6,29 +6,13 @@ MAINTAINER KBase Developer
 # install line here, a git checkout to download code, or run any other
 # installation scripts.
 
-RUN apt-get update
-
-# Here we install a python coverage tool and an
-# https library that is out of date in the base image.
-
-RUN pip install coverage
-
-# update security libraries in the base image
-RUN pip install pip==8.1.2
-RUN pip install --disable-pip-version-check pyopenssl --upgrade
-RUN pip install cffi cryptography==2.0.3 --upgrade \
-    && pip install ndg-httpsclient --upgrade \
-    && pip install pyasn1 --upgrade \
-    && pip install requests --upgrade \
-    && pip install 'requests[security]' --upgrade
 
 # To install all the dependencies
 RUN apt-get update && apt-get install -y build-essential wget make curl unzip python && \
     apt-get install -y r-base r-cran-gplots
 
 # To download the Maxbin software and untar it
-RUN cd /kb/dev_container/modules && \
-    mkdir MaxBin && cd MaxBin && \
+RUN mkdir MaxBin && cd MaxBin && \
     wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.4.tar.gz/download --no-check-certificate &&\
     tar xvf download && \
     cd MaxBin-2.2.4/src && \
