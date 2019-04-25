@@ -1,17 +1,14 @@
 #
 # define display information
 #
-name     : MaxBin2 Contig Binning - v2.2.4
-subtitle : Bin assembled metagenomic contigs
-tooltip  : Group assembled metagenomic contigs into lineages (Binning) using depth-of-coverage, nucleotide composition, and marker genes
+name     : Bin Contigs using MaxBin2 - v2.2.4
+
+tooltip  : Group assembled metagenomic contigs into lineages (Bins) using depth-of-coverage, nucleotide composition, and marker genes.
 
 icon: maxbin2-green.png
 
 screenshots:
-
-    - maxbin_input_cell.png
-    - maxbin_output_report.png
-    - maxbin_output_binned_contig_view.png
+    []
 
 #
 # define a set of similar methods that might be useful to the user
@@ -34,63 +31,59 @@ suggestions:
 parameters :
     assembly_ref :
         ui-name : Assembly Object
-        short-hint : Metagenome assembly object
-        long-hint  : Metagenome assembly object
+        short-hint : The metagenome Assembly object.
 
     binned_contig_name :
         ui-name : BinnedContig Object Name
-        short-hint : Output BinnedContig object name
-        long-hint  : Output BinnedContig object name
+        short-hint : The name for the output BinnedContig object.
 
     reads_list :
         ui-name : Read Library Object
-        short-hint : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
-        long-hint  : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run
+        short-hint : A list of reads object (PairedEndLibrary/SingleEndLibrary) upon which MaxBin will be run.
 
     prob_threshold :
         ui-name : Probability Threshold
-        short-hint : Minimum probability for EM algorithm (default 0.8)
-        long-hint  : Minimum probability for EM algorithm (default 0.8). Sequences that do not meet the threshold are discarded as 'unclassified'.
+        short-hint : Minimum probability for the Expectation-Maximization (EM) algorithm (default is 0.8). Sequences that do not meet the threshold are discarded as 'unclassified'.
 
     markerset :
         ui-name : Marker Set
-        short-hint : Choose between 107 marker genes by default or 40 marker genes
-        long-hint  : By default MaxBin will look for 107 marker genes present in >95% of bacteria. Alternatively you can also choose 40 marker gene sets that are universal among bacteria and archaea.
+        short-hint : Choose between either 107 marker genes or 40 marker genes. By default, MaxBin2 will look for 107 marker genes present in >95% of bacteria. Alternatively, you can choose the 40 marker gene sets that are universal among bacteria and archaea.
 
     min_contig_length :
         ui-name : Minimum Contig Length
-        short-hint : minimum contig length (default 1000)
-        long-hint  : minimum contig length (default 1000)
+        short-hint : The minimum contig length (default is 1000 bp).
 
     plotmarker :
         ui-name : Plot Markers per Contig
-        short-hint : Specify this option if you want to plot the markers in each contig
-        long-hint  : Specify this option if you want to plot the markers in each contig
+        short-hint : Specify this option if you want to plot the markers in each contig.
 
 description : |
-    <p>MaxBin2 clusters metagenomic contigs (assembled contiguous genome fragments) into different "bins", each of which corresponds to a putative population genome.</p>
+    <p>MaxBin2 clusters metagenomic contigs (assembled contiguous genome fragments) into different "bins", each of which corresponds to a putative population genome. It uses nucleotide composition information, source strain abundance (measured by depth-of-coverage by aligning the reads to the contigs), and phylogenetic marker genes to perform binning through an Expectation-Maximization (EM) algorithm.</p>
 
-    <p>MaxBin2 uses nucleotide composition information, source strain abundance (measured by depth-of-coverage by aligning the reads to the contigs), and phylogenetic marker genes to perform binning through an Expectation-Maximization algorithm.</p>
-    <p><hr></p>
+    <p>MaxBin2 takes a metagenome assembly and the read sequence data that produced the assembly and produces groupings of the contigs that correspond to putative genomes, called "bins".  MaxBin is software for binning assembled metagenomic sequences based on an Expectation-Maximization algorithm. Users can understand the underlying bins (genomes) of the microbes in their metagenomes by simply providing assembled metagenomic sequences and the reads coverage information or sequencing reads. For convenience, MaxBin will report genome-related statistics, including estimated completeness, GC content, and genome size in the binning summary page.</p>
 
-    <p><hr></p>
-    <p><i>Implemented for KBase by <a href="mailto:tianhaogu2012@u.northwestern.edu">Tianhao Gu (tianhaogu2012@u.northwestern.edu)</a>, <a href="mailto:WJRiehl@lbl.gov">William J Riehl (WJRiehl@lbl.gov)</a>, and <a href="mailto:DCChivian@lbl.gov">Dylan Chivian (DCChivian@lbl.gov)</a></i></p>
-    <p><hr></p>
-    <p>MaxBin2 takes a metagenome assembly and the read sequence data that produced the assembly and produces groupings of the contigs that correspond to putative genomes, called "bins".  MaxBin is software for binning assembled metagenomic sequences based on an Expectation-Maximization algorithm. Users can understand the underlying bins (genomes) of the microbes in their metagenomes by simply providing assembled metagenomic sequences and the reads coverage information or sequencing reads. For users' convenience MaxBin will report genome-related statistics, including estimated completeness, GC content and genome size in the binning summary page.</p>
-    <p><hr></p>
-    <p><b>Configuration:</b></p>
-    <p><b><i>Assembly Object:</i></b> The Assembly object is a collection of assembled genome fragments, called "contigs".  These are the items that MaxBin2 will bin.  Currently only a single Assembly object is accepted by the MaxBin2 App.</p>
-    <p><b><i>BinnedContig Object Name:</i></b> The BinnedContig Object is created by MaxBin2.  It stores the bin assignments for each of the contigs.</p>
-    <p><b><i>Read Library Object:</i></b> The read libraries are aligned to the contigs using BowTie, and provide the abundance information for each contig that roughly follows the species abundance.</p>
-    <p><b><i>Probability Threshold:</i></b> This sets the confidence that must be met by the Expectation Maximumization algorithm in order for a given contig to be grouped with a bin.  Contigs receiving values below this threshold are deemed "unnclassified".</p>
-    <p><b><i>Marker Set:</i></b> Phylogenetic markers are used as a term in the EM algorithm.  The user can select between 107 markers that correspond primarily to bacterial lineages, or 40 markers that are found in both bacteria and archaea.  If a user expects that there are mostly bacteria in their samples, they should select the set of 107. </p>
-    <p><b><i>Minimum Contig Length:</i></b> Some assemblies contain shorter contigs that may slow down analysis and are of reduced value in that they may not contain complete genes as well as be too short for statistically meaningful nucleotide composition profiles.  A value of 1000 bp is a reasonable cutoff.</p>
-    <p><b><i>Plot Marker:</i></b> The Phylogenetic marker genes found can be indicated and downloaded.</p>
-    <p><hr></p>
-    <p><b>Output:</b></p>
-    <p><b><i>Output Object:</i></b> The BinnedContig object contains the bin assignments for each contig in the Assembly object.</p>
-    <p><b><i>Output Bin Summary Report:</i></b> A table with the characteristics of each of the bins, including the bin name, its depth of coverage (abundance), the esitimated completeness (using the phylogenetic marker genes found in each bin), an estimate of the genome size (combining the completeness estimation with the observed contig lengths for that bin), and the GC % found in the binned contigs.</p>
-    <p><b><i>Downloadable files:</i></b> The enitre output of the MaxBin2 run may be downloaded as a zip file.</p>
+    <p><strong>Team members who developed &amp; deployed algorithm in KBase:</strong> Tianhao Gu, William J Riehl, and Dylan Chivian. For questions, please <a href=”http://kbase.us/contact-us/”>contact us</a>.</p>
+
+    <p><b>App Configuration Information:</b>
+    <ul>
+      <li><b><i>Assembly Object:</i></b> The Assembly object is a collection of assembled genome fragments, called "contigs". These are the items that MaxBin2 will bin. Currently, only a single Assembly object is accepted by the MaxBin2 App.</li>
+      <li><b><i>BinnedContig Object Name:</i></b> The BinnedContig object is created by MaxBin2. It stores the bin assignments for each of the contigs.</li>
+      <li><b><i>Read Library Object:</i></b> The read libraries are aligned to the contigs using BowTie2, and provide the abundance information for each contig that roughly follows the species abundance.</li>
+      <li><b><i>Probability Threshold:</i></b> This sets the confidence that must be met by the Expectation Maximization (EM) algorithm in order for a given contig to be grouped with a bin.  Contigs receiving values below this threshold are deemed "unclassified".</li>
+      <li><b><i>Marker Set:</i></b> Phylogenetic markers are used as a term in the EM algorithm.  The user can select between 107 markers that correspond primarily to bacterial lineages, or 40 markers that are found in both bacteria and archaea. If a user expects that there are mostly bacteria in their samples, they should select the set of 107.</li>
+      <li><b><i>Minimum Contig Length:</i></b> Some assemblies contain shorter contigs that may slow down analysis. These can be of reduced value  in that they may not contain complete genes and may be too short for statistically meaningful nucleotide composition profiles.  A value of 1000 bp is a reasonable cutoff. By setting a larger value (e.g., 2500 bp), once can minimize the contamination of bins by small contigs.</li>
+      <li><b><i>Plot Marker:</i></b> Phylogenetic marker genes found in the bins can be indicated and downloaded.</li>
+    </ul>
+    </p>
+
+    <p><b>App Output:</b>
+    <ul>
+      <li><b><i>Output Object:</i></b> The BinnedContig object contains the bin assignments for each contig in the Assembly object.</li>
+      <li><b><i>Output Bin Summary Report:</i></b> A table with the characteristics of each of the bins, including the bin name, its depth of coverage (abundance), the estimated completeness (using the phylogenetic marker genes found in each bin), an estimate of the genome size (combining the completeness estimation with the observed contig lengths for that bin), and the the binned contig percent GC.</li>
+      <li><b><i>Downloadable files:</i></b> The entire output of the MaxBin2 run may be downloaded as a zip file.</li>
+    </ul>
+    </p>
+
 
 publications :
     -
@@ -106,10 +99,10 @@ publications :
 
     -
         display-text: |
-            Maxbin source:
-        link: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
+            Maxbin2 source:
+        link: https://sourceforge.net/projects/maxbin2/
 
     -
         display-text: |
-            Maxbin2 source:
-        link: https://sourceforge.net/projects/maxbin2/
+            Maxbin source:
+        link: http://downloads.jbei.org/data/microbial_communities/MaxBin/README.txt
