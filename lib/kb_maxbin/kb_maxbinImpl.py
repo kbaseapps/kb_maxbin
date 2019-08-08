@@ -23,8 +23,8 @@ class kb_maxbin:
     # the latter method is running.
     ######################################### noqa
     VERSION = "1.1.0"
-    GIT_URL = "kb_maxbin"
-    GIT_COMMIT_HASH ="ceb65382172d525f3a47d46d2f25edaefb6b5e68"
+    GIT_URL = "https://github.com/kbaseapps/kb_maxbin.git"
+    GIT_COMMIT_HASH = "ceb65382172d525f3a47d46d2f25edaefb6b5e68"
 
     #BEGIN_CLASS_HEADER
     #END_CLASS_HEADER
