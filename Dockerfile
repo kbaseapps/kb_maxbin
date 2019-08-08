@@ -8,7 +8,7 @@ MAINTAINER KBase Developer
 
 
 # To install all the dependencies
-RUN apt-get update && apt-get install -y build-essential wget make curl unzip python && \
+RUN apt-get update && apt-get install -y build-essential wget make curl unzip python autoconf && \
     apt-get install -y r-base r-cran-gplots
 
 # To download the Maxbin software and untar it
