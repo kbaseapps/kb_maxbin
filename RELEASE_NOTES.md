@@ -1,3 +1,6 @@
+### Version 1.1.1
+- Added installing autoconf in Dockerfile to allow installing auxiliary software
+
 ### Version 1.1.0
 - Update to Python 3
 
