@@ -159,6 +159,11 @@ class kb_maxbinTest(unittest.TestCase):
         return self.__class__.ctx
 
     def test_bad_run_maxbin_params(self):
+        method_name = 'test_bad_run_maxbin_params'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
+
         invalidate_input_params = {
           'missing_assembly_ref': 'assembly_ref',
           'binned_contig_name': 'binned_contig_name',
@@ -200,6 +205,10 @@ class kb_maxbinTest(unittest.TestCase):
             self.getImpl().run_max_bin(self.getContext(), invalidate_input_params)
 
     def xtest_MaxBinUtil_stage_file(self):
+        method_name = 'xtest_MaxBinUtil_stage_file'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
 
         contig_filename = '20x.scaffold.gz'
         contig_path = os.path.join(self.scratch, contig_filename)
@@ -221,6 +230,11 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertEqual(contig_filename.rpartition('.')[0], os.path.basename(contig_file_path))
 
     def test_MaxBinUtil_generate_command(self):
+        method_name = 'test_MaxBinUtil_generate_command'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
+
         input_params = {
             'contig_file_path': 'mycontig',
             'out_header': 'myout',
@@ -278,6 +292,10 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertEqual(command, expect_command)
 
     def test_MaxBinUtil_generate_output_file_list(self):
+        method_name = 'test_MaxBinUtil_generate_output_file_list'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
 
         result_file_file_directory = 'MaxBin_result'
         result_file_path = os.path.join(self.scratch, result_file_file_directory)
@@ -305,6 +323,11 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertEqual(output_file.get('label'), 'maxbin_result.zip')
 
     def test_MaxBinUtil_stage_reads_list_file(self):
+        method_name = 'test_MaxBinUtil_stage_reads_list_file'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
+
         # test SingleEndLibrary
         reads_list = [self.se_reads_ref, self.se_reads_ref]
 
@@ -354,6 +377,11 @@ class kb_maxbinTest(unittest.TestCase):
             self.assertRegex(item, r'.*\.inter\.fastq.*')
 
     def test_MaxBinUtil_get_contig_file(self):
+        method_name = 'test_MaxBinUtil_get_contig_file'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
+
         contig_file = self.maxbin_runner._get_contig_file(self.assembly_ref)
 
         with open(contig_file, 'r') as file:
@@ -365,6 +393,10 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertCountEqual(contig_file_content, expect_contig_file_content)
 
     def test_run_maxbin_single_reads(self):
+        method_name = 'test_run_maxbin_single_reads'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
 
         input_params = {
             'assembly_ref': self.assembly_ref,
@@ -386,6 +418,10 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertTrue('report_ref' in result)
 
     def test_run_maxbin_multi_reads(self):
+        method_name = 'test_run_maxbin_multi_reads'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
 
         input_params = {
             'assembly_ref': self.assembly_ref,
@@ -407,6 +443,10 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertTrue('report_ref' in result)
 
     def test_run_maxbin_single_reads_KBaseAssembly_reads(self):
+        method_name = 'test_run_maxbin_single_reads_KBaseAssembly_reads'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
 
         input_params = {
             'assembly_ref': self.assembly_ref,
@@ -428,6 +468,10 @@ class kb_maxbinTest(unittest.TestCase):
         self.assertTrue('report_ref' in result)
 
     def test_run_maxbin_multi_reads_KBaseAssembly_reads(self):
+        method_name = 'test_run_maxbin_multi_reads_KBaseAssembly_reads'
+        print ("\n=================================================================")
+        print ("RUNNING "+method_name+"()")
+        print ("=================================================================\n")
 
         input_params = {
             'assembly_ref': self.assembly_ref,
