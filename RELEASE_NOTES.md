@@ -1,3 +1,6 @@
+### Version 1.1.2
+- upgrading maxbin to 2.2.7
+
 ### Version 1.1.1
 - Added installing autoconf in Dockerfile to allow installing auxiliary software
 
