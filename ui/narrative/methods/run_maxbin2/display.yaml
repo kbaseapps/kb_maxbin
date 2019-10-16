@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name     : Bin Contigs using MaxBin2 - v2.2.4
+name     : Bin Contigs using MaxBin2 - v2.2.7
 
 tooltip  : Group assembled metagenomic contigs into lineages (Bins) using depth-of-coverage, nucleotide composition, and marker genes.
 
