@@ -13,14 +13,14 @@ RUN apt-get update && apt-get install -y build-essential wget make curl unzip py
 
 # To download the Maxbin software and untar it
 RUN mkdir MaxBin && cd MaxBin && \
-    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.4.tar.gz/download --no-check-certificate &&\
+    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.7.tar.gz/download --no-check-certificate &&\
     tar xvf download && \
-    cd MaxBin-2.2.4/src && \
+    cd MaxBin-2.2.7/src && \
     make && \
     cd .. && \
     ./autobuild_auxiliary && \
     cd .. && \
-    cp -R MaxBin-2.2.4 /kb/deployment/bin/MaxBin
+    cp -R MaxBin-2.2.7 /kb/deployment/bin/MaxBin
 
 # -----------------------------------------
 

@@ -1,7 +1,7 @@
 {
-    "ver": "1.0.2",
+    "ver": "1.1.2",
     "authors": [
-        "dylan", "tgu2"
+        "dylan", "tgu2", "scanon", "seanjungbluth"
     ],
     "contact" : "help@kbase.us",
     "visible" : true,
@@ -10,7 +10,7 @@
         "input": "kbaseNarrativeMethodInput",
         "output" : "kbaseBinnedContigs"
     },
-    "parameters": [ 
+    "parameters": [
         {
             "id": "assembly_ref",
             "optional": false,
@@ -22,7 +22,7 @@
                 "valid_ws_types" : ["KBaseGenomeAnnotations.Assembly"]
             }
         },
-        {  
+        {
             "id": "binned_contig_name",
             "optional": false,
             "advanced": false,
@@ -63,9 +63,9 @@
             "allow_multiple" : false,
             "default_values" : [ "107" ],
             "field_type" : "dropdown",
-            "dropdown_options": 
+            "dropdown_options":
             {
-                "options": 
+                "options":
                 [
                     {
                       "display": "107 Bacterial Marker Gene Set",
@@ -88,7 +88,7 @@
             "text_options": {
                 "validate_as" : "int"
             }
-        },   
+        },
         {
             "id": "plotmarker",
             "optional":true,
@@ -100,7 +100,7 @@
                 "checked_value": 1,
                 "unchecked_value": 0
             }
-         }  
+         }
     ],
     "behavior": {
         "service-mapping": {
