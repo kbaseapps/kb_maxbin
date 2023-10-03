@@ -1,4 +1,4 @@
-FROM kbase/sdkbase2:python
+FROM kbase/sdkpython:3.8.0
 MAINTAINER KBase Developer
 # -----------------------------------------
 # In this section, you can install any system dependencies required
@@ -8,19 +8,22 @@ MAINTAINER KBase Developer
 
 
 # To install all the dependencies
-RUN apt-get update && apt-get install -y build-essential wget make curl unzip python autoconf && \
+RUN apt-get update && apt-get install -y build-essential wget make curl unzip autoconf && \
     apt-get install -y r-base r-cran-gplots
 
 # To download the Maxbin software and untar it
 RUN mkdir MaxBin && cd MaxBin && \
-    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.7.tar.gz/download --no-check-certificate &&\
+    wget https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.7.tar.gz/download &&\
     tar xvf download && \
     cd MaxBin-2.2.7/src && \
     make && \
     cd .. && \
-    ./autobuild_auxiliary && \
-    cd .. && \
-    cp -R MaxBin-2.2.7 /kb/deployment/bin/MaxBin
+    ./autobuild_auxiliary
+
+RUN mkdir -p /kb/deployment/bin/MaxBin && \
+    cp -R /MaxBin/MaxBin-2.2.7/* /kb/deployment/bin/MaxBin
+
+RUN pip install biopython==1.81
 
 # -----------------------------------------
 
